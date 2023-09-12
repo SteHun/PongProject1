@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
@@ -108,13 +109,22 @@ namespace PongProject1
                     continue;
                 // the paddle has passed all checks and is in a colission with the ball
                 // TEMP!!! for now it returns 0 to bounce the ball straingt. Replace later
-                return 0;
+                float ballMiddleYPos = Position.Y + texture.Height / 2;
+                float paddleMiddleYPos = paddle.Position.Y + paddle.height / 2;
+                Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / (paddle.height / 2)}");
+                return (paddleMiddleYPos - ballMiddleYPos) / (paddle.height);
             }
             return null;
         }
 
+        // chooses a value between min and max based on the value (with range -1 to 1)
         private float MapValue(float min, float max, float value)
         {
+            // value can't be higher than 1 or lower than -1
+            if (value < 0)
+                value = MathF.Max(-1, value);
+            else
+                value = MathF.Min(1, value);
             float half = (max + min) / 2;
             float result = half + half * value;
             return result;
