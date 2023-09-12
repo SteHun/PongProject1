@@ -32,11 +32,14 @@ namespace PongProject1
             Position = startingPosition;
             IsFacingRight = isFacingRight;
         }
-
+        internal void Reset()
+        {
+            Position = startingPosition;
+        }
         internal void Load(ContentManager content, string paddleFileName)
         {
             texture = content.Load<Texture2D>(paddleFileName);
-            this.width = texture.Width;
+            width = texture.Width;
         }
 
         internal void Update(GameTime gameTime)

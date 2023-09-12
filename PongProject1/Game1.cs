@@ -17,8 +17,8 @@ namespace PongProject1
         private const float defaultMaxBounceAngle = 140;
 
         private const string ballFileName = "ball";
-        private const string player1PaddleFileName= "bluePaddle";
-        private const string player2PaddleFileName= "redPaddle";
+        private const string player1PaddleFileName = "bluePaddle";
+        private const string player2PaddleFileName = "redPaddle";
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -43,14 +43,14 @@ namespace PongProject1
         protected override void Initialize()
         {
             Window.Title = "Pong";
-            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity, 
+            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity,
                 defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle);
             int windowHeight = _graphics.PreferredBackBufferHeight;
-            player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
+            player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
-            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
+            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player2UpKey, player2DownKey, defaultPaddleSpeed, false);
-            
+
             base.Initialize();
         }
 
@@ -58,18 +58,31 @@ namespace PongProject1
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ball.Load(Content, ballFileName, new Paddle[] {player1Paddle, player2Paddle});
-            ball.Respawn();
+            ball.Load(Content, ballFileName, new Paddle[] { player1Paddle, player2Paddle });
 
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);
+            base.LoadContent();
+        }
+
+        protected void StartGame()
+        {
             player1Paddle.Active = true;
             player1Paddle.Visible = true;
             player2Paddle.Active = true;
             player2Paddle.Visible = true;
-            base.LoadContent();
+            ball.Respawn();
+            player1Paddle.Reset();
+            player2Paddle.Reset();
         }
 
+        protected void QuitGame()
+        {
+            player1Paddle.Active = false;
+            player1Paddle.Visible = false;
+            player2Paddle.Active = false;
+            player2Paddle.Visible = false;
+        }
         protected override void Update(GameTime gameTime)
         {
 
@@ -77,7 +90,8 @@ namespace PongProject1
 
             if (Keyboard.GetState().IsKeyDown(pauseKey))
             {
-                ball.Respawn();
+                QuitGame();
+                StartGame();
             }
 
             player1Paddle.Update(gameTime);
