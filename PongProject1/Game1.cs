@@ -9,16 +9,27 @@ namespace PongProject1
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Keys player1DownKey = Keys.S;
+        private Keys player1UpKey = Keys.W;
+        private Keys player2DownKey = Keys.Down;
+        private Keys player2UpKey = Keys.Up;
+        private Keys pauseKey = Keys.Escape;
+        private Keys confirmKey = Keys.Enter;
+
+        private Ball ball;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Window.Title = "Pong";
+
+            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
             base.Initialize();
         }
@@ -27,24 +38,29 @@ namespace PongProject1
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            ball.Load(Content);
+            ball.Respawn();
+            base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
 
-            // TODO: Add your update logic here
+            ball.Update(gameTime);
 
+            if (Keyboard.GetState().IsKeyDown(pauseKey))
+            {
+                ball.Respawn();
+            }
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            ball.Draw(gameTime, _spriteBatch);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
