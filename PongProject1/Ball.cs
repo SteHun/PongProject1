@@ -15,6 +15,8 @@ namespace PongProject1
         private int screenWidth, screenHeight;
         public bool Active = false;
         public bool Visible = false;
+        public bool PlayerHasScoared = false;
+        public byte ScoaringPlayer = 0;
         private Vector2 startingPosition;
         internal Vector2 Position;
         internal Vector2 Velocity;
@@ -22,8 +24,10 @@ namespace PongProject1
         private float startingVelocity;
         private float minServeAngle;
         private float maxServeAngle;
+        private float minBounceAngle;
+        private float maxBounceAngle;
         private Paddle[] paddles;
-        internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle)
+        internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle, float minBounceAngle, float maxBounceAngle)
         {
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
@@ -31,7 +35,9 @@ namespace PongProject1
 
             //convert to radians
             this.minServeAngle = minServeAngle * (MathF.PI / 180);
-            this.maxServeAngle = maxServeAngle * (MathF.PI/ 180);
+            this.maxServeAngle = maxServeAngle * (MathF.PI / 180);
+            this.minBounceAngle = minBounceAngle * (MathF.PI / 180);
+            this.maxBounceAngle = maxBounceAngle* (MathF.PI/ 180);
         }
 
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddles)
@@ -49,16 +55,27 @@ namespace PongProject1
             // bounce the ball
             if (Position.Y <= 0 || Position.Y + texture.Height >= screenHeight)
                 Velocity.Y *= -1;
-            if (Position.X <= 0 || Position.X + texture.Width>= screenWidth)
-                Velocity.X *= -1;
+
+            if (Position.X <= 0)
+            {
+                Active = false;
+                PlayerHasScoared = true;
+                ScoaringPlayer = 2;
+            }
+            if (Position.X + texture.Width >= screenWidth)
+            {
+                Active = false;
+                PlayerHasScoared = true;
+                ScoaringPlayer = 1;
+            }
             float? colissionResult = CheckColission();
             if (colissionResult.HasValue)
             {
                 float angle;
                 if (Velocity.X < 0)
-                    angle = MapValue(minServeAngle, maxServeAngle, (float)colissionResult);
+                    angle = MapValue(minBounceAngle, maxBounceAngle, (float)colissionResult);
                 else
-                    angle = MapValue(minServeAngle + MathF.PI, maxServeAngle + MathF.PI, (float)-colissionResult);
+                    angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-colissionResult);
                 Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
             }
         }
@@ -76,6 +93,8 @@ namespace PongProject1
             Position = startingPosition;
             Active = true;
             Visible = true;
+            PlayerHasScoared = false;
+            ScoaringPlayer = 0;
             float angle;
             // Choose the player that will be served the ball
             if (rng.Next(2) == 0)
@@ -112,7 +131,7 @@ namespace PongProject1
                 float ballMiddleYPos = Position.Y + texture.Height / 2;
                 float paddleMiddleYPos = paddle.Position.Y + paddle.height / 2;
                 Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / (paddle.height / 2)}");
-                return (paddleMiddleYPos - ballMiddleYPos) / (paddle.height);
+                return (paddleMiddleYPos - ballMiddleYPos) / (paddle.height / 2);
             }
             return null;
         }

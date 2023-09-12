@@ -13,6 +13,8 @@ namespace PongProject1
         private const float defaultStartingVelocity = 200;
         private const float defaultMinServeAngle = 60;
         private const float defaultMaxServeAngle = 120;
+        private const float defaultMinBounceAngle = 40;
+        private const float defaultMaxBounceAngle = 140;
 
         private const string ballFileName = "ball";
         private const string player1PaddleFileName= "bluePaddle";
@@ -41,7 +43,8 @@ namespace PongProject1
         protected override void Initialize()
         {
             Window.Title = "Pong";
-            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity, defaultMinServeAngle, defaultMaxServeAngle);
+            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity, 
+                defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle);
             int windowHeight = _graphics.PreferredBackBufferHeight;
             player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
