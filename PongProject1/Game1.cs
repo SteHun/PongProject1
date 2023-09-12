@@ -9,6 +9,7 @@ namespace PongProject1
         private const int defaultPaddleHeight = 100;
         private const int defaultPaddleSpeed = 300;
         private const int defaultPaddleDistanceFromEdge = 40;
+        private const int defaultMaxLives = 3;
 
         private const float defaultStartingVelocity = 200;
         private const float defaultMinServeAngle = 60;
@@ -32,6 +33,8 @@ namespace PongProject1
         private Ball ball;
         private Paddle player1Paddle;
         private Paddle player2Paddle;
+        private int player1Lives;
+        private int player2Lives;
 
         public Game1()
         {
@@ -67,6 +70,8 @@ namespace PongProject1
 
         protected void StartGame()
         {
+            player1Lives = defaultMaxLives;
+            player2Lives = defaultMaxLives;
             player1Paddle.Active = true;
             player1Paddle.Visible = true;
             player2Paddle.Active = true;
@@ -82,6 +87,8 @@ namespace PongProject1
             player1Paddle.Visible = false;
             player2Paddle.Active = false;
             player2Paddle.Visible = false;
+            ball.Active = false;
+            ball.Visible = false;
         }
         protected override void Update(GameTime gameTime)
         {
@@ -96,6 +103,38 @@ namespace PongProject1
 
             player1Paddle.Update(gameTime);
             player2Paddle.Update(gameTime);
+
+            if (ball.PlayerHasScoared)
+            {
+                if (ball.ScoaringPlayer == 1)
+                {
+                    player2Lives--;
+                    if (player2Lives <= 0)
+                    {
+                        // Code for handeling game over. Place a proper game over screen (as part of some method) here
+                        QuitGame();
+                        base.Update(gameTime);
+                        return;
+                    }
+                }
+                else
+                {
+                    player1Lives--;
+                    if (player1Lives <= 0)
+                    {
+                        // Code for handeling game over. Place a proper game over screen (as part of some method) here
+                        QuitGame();
+                        base.Update(gameTime);
+                        return;
+                    }
+                }
+
+
+
+                // Code for handeling resetting the field (a timeout???) here
+                ball.Respawn();
+            }
+
             base.Update(gameTime);
         }
 
