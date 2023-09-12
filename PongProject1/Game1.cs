@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using PongProject1.Content;
 
 namespace PongProject1
 {
@@ -43,7 +42,7 @@ namespace PongProject1
             ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity, defaultMinServeAngle, defaultMaxServeAngle);
             int windowHeight = _graphics.PreferredBackBufferHeight;
             player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
-                defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed);
+                defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
             
             base.Initialize();
         }
@@ -52,7 +51,7 @@ namespace PongProject1
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ball.Load(Content, ballFileName);
+            ball.Load(Content, ballFileName, new Paddle[] {player1Paddle});
             ball.Respawn();
 
             player1Paddle.Load(Content, player1PaddleFileName);

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace PongProject1.Content
+namespace PongProject1
 {
     internal class Paddle
     {
@@ -13,13 +13,15 @@ namespace PongProject1.Content
         internal bool Visible = false;
         internal float Speed;
         internal int height;
+        internal int width;
+        internal bool IsFacingRight;
 
         private int screenHeight;
         private Texture2D texture;
         private Vector2 startingPosition;
         private Keys upKey;
         private Keys downKey;
-        internal Paddle(Vector2 startingPosition, int height, int screenHeight, Keys upKey, Keys downKey, float speed)
+        internal Paddle(Vector2 startingPosition, int height, int screenHeight, Keys upKey, Keys downKey, float speed, bool isFacingRight)
         {
             this.startingPosition = startingPosition;
             this.height = height;
@@ -28,11 +30,13 @@ namespace PongProject1.Content
             this.downKey = downKey;
             Speed = speed;
             Position = startingPosition;
+            IsFacingRight = isFacingRight;
         }
 
         internal void Load(ContentManager content, string paddleFileName)
         {
             texture = content.Load<Texture2D>(paddleFileName);
+            this.width = texture.Width;
         }
 
         internal void Update(GameTime gameTime)

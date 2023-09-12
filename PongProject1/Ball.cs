@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace PongProject1
 {
@@ -20,6 +21,7 @@ namespace PongProject1
         private float startingVelocity;
         private float minServeAngle;
         private float maxServeAngle;
+        private Paddle[] paddles;
         internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle)
         {
             this.screenWidth = screenWidth;
@@ -31,10 +33,11 @@ namespace PongProject1
             this.maxServeAngle = maxServeAngle * (MathF.PI/ 180);
         }
 
-        internal void Load(ContentManager content, string textureFileName)
+        internal void Load(ContentManager content, string textureFileName, Paddle[] paddles)
         {
             texture = content.Load<Texture2D>(textureFileName);
             startingPosition = new Vector2(screenWidth - texture.Width, screenHeight - texture.Height) / 2;
+            this.paddles = paddles;
         }
 
         internal void Update(GameTime gameTime)
@@ -47,6 +50,16 @@ namespace PongProject1
                 Velocity.Y *= -1;
             if (Position.X <= 0 || Position.X + texture.Width>= screenWidth)
                 Velocity.X *= -1;
+            float? colissionResult = CheckColission();
+            if (colissionResult.HasValue)
+            {
+                float angle;
+                if (Velocity.X < 0)
+                    angle = MapValue(minServeAngle, maxServeAngle, (float)colissionResult);
+                else
+                    angle = MapValue(minServeAngle + MathF.PI, maxServeAngle + MathF.PI, (float)colissionResult);
+                Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
+            }
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
@@ -74,6 +87,37 @@ namespace PongProject1
                 angle = (float)rng.NextDouble() * (maxServeAngle - minServeAngle) + minServeAngle + MathF.PI;
             }
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
+        }
+
+        // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no colission
+        private float? CheckColission()
+        {
+            bool isMovingRight = Velocity.X > 0;
+            foreach(Paddle paddle in paddles)
+            {
+                // (I know this can be done in fewer steps, but this is more readable
+                if (isMovingRight && paddle.IsFacingRight)
+                    continue;
+                if (!isMovingRight && !paddle.IsFacingRight)
+                    continue;
+                // is the ball in the correct x position for it it hit this paddle? 
+                if (!(Position.X + texture.Width >= paddle.Position.X && Position.X <= paddle.Position.X + paddle.width))
+                    continue;
+                // in the ball in the correct y position for it to hit this paddle?
+                if (!(Position.Y + texture.Height >= paddle.Position.Y && Position.Y <= paddle.Position.Y + paddle.height))
+                    continue;
+                // the paddle has passed all checks and is in a colission with the ball
+                // TEMP!!! for now it returns 0 to bounce the ball straingt. Replace later
+                return 0;
+            }
+            return null;
+        }
+
+        private float MapValue(float min, float max, float value)
+        {
+            float half = (max + min) / 2;
+            float result = half + half * value;
+            return result;
         }
     }
 
