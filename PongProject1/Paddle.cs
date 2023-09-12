@@ -39,6 +39,11 @@ namespace PongProject1
         internal void Load(ContentManager content, string paddleFileName)
         {
             texture = content.Load<Texture2D>(paddleFileName);
+            if (!IsFacingRight)
+            {
+                startingPosition.X -= texture.Width;
+                Position = startingPosition;
+            }
             width = texture.Width;
         }
 
