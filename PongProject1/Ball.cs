@@ -58,7 +58,7 @@ namespace PongProject1
                 if (Velocity.X < 0)
                     angle = MapValue(minServeAngle, maxServeAngle, (float)colissionResult);
                 else
-                    angle = MapValue(minServeAngle + MathF.PI, maxServeAngle + MathF.PI, (float)colissionResult);
+                    angle = MapValue(minServeAngle + MathF.PI, maxServeAngle + MathF.PI, (float)-colissionResult);
                 Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
             }
         }
@@ -126,7 +126,7 @@ namespace PongProject1
             else
                 value = MathF.Min(1, value);
             float half = (max + min) / 2;
-            float result = half + half * value;
+            float result = half + (half - min) * value;
             return result;
         }
     }

@@ -16,6 +16,7 @@ namespace PongProject1
 
         private const string ballFileName = "ball";
         private const string player1PaddleFileName= "bluePaddle";
+        private const string player2PaddleFileName= "redPaddle";
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
@@ -28,6 +29,7 @@ namespace PongProject1
 
         private Ball ball;
         private Paddle player1Paddle;
+        private Paddle player2Paddle;
 
         public Game1()
         {
@@ -43,6 +45,8 @@ namespace PongProject1
             int windowHeight = _graphics.PreferredBackBufferHeight;
             player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
+            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2), 
+                defaultPaddleHeight, windowHeight, player2UpKey, player2DownKey, defaultPaddleSpeed, false);
             
             base.Initialize();
         }
@@ -51,12 +55,15 @@ namespace PongProject1
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ball.Load(Content, ballFileName, new Paddle[] {player1Paddle});
+            ball.Load(Content, ballFileName, new Paddle[] {player1Paddle, player2Paddle});
             ball.Respawn();
 
             player1Paddle.Load(Content, player1PaddleFileName);
+            player2Paddle.Load(Content, player2PaddleFileName);
             player1Paddle.Active = true;
             player1Paddle.Visible = true;
+            player2Paddle.Active = true;
+            player2Paddle.Visible = true;
             base.LoadContent();
         }
 
@@ -71,6 +78,7 @@ namespace PongProject1
             }
 
             player1Paddle.Update(gameTime);
+            player2Paddle.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -80,6 +88,7 @@ namespace PongProject1
             _spriteBatch.Begin();
             ball.Draw(gameTime, _spriteBatch);
             player1Paddle.Draw(gameTime, _spriteBatch);
+            player2Paddle.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
