@@ -12,6 +12,7 @@ namespace PongProject1
         private const int defaultMaxLives = 3;
 
         private const float defaultStartingVelocity = 200;
+        private const float defaultVelocityIncrement = 10;
         private const float defaultMinServeAngle = 60;
         private const float defaultMaxServeAngle = 120;
         private const float defaultMinBounceAngle = 40;
@@ -49,11 +50,11 @@ namespace PongProject1
         {
             Window.Title = "Pong";
             ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity,
-                defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle);
+                defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle, defaultVelocityIncrement);
             int windowHeight = _graphics.PreferredBackBufferHeight;
-            player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2),
+            player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
-            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (windowHeight - defaultPaddleHeight) / 2),
+            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player2UpKey, player2DownKey, defaultPaddleSpeed, false);
 
             base.Initialize();
@@ -63,7 +64,7 @@ namespace PongProject1
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ball.Load(Content, ballFileName, new Paddle[] { player1Paddle, player2Paddle });
+            ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
 
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);

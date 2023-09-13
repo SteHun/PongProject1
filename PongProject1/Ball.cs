@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 
 namespace PongProject1
 {
@@ -13,25 +11,28 @@ namespace PongProject1
 
 
         private int screenWidth, screenHeight;
-        public bool Active = false;
-        public bool Visible = false;
-        public bool PlayerHasScoared = false;
-        public byte ScoaringPlayer = 0;
+        public bool Active;
+        public bool Visible;
+        public bool PlayerHasScoared;
+        public byte ScoaringPlayer;
         private Vector2 startingPosition;
         internal Vector2 Position;
         internal Vector2 Velocity;
         private Texture2D texture;
         private float startingVelocity;
+        private float velocityIncrement;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
         private float maxBounceAngle;
+        private int totalBounces;
         private Paddle[] paddles;
-        internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle, float minBounceAngle, float maxBounceAngle)
+        internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle, float minBounceAngle, float maxBounceAngle, float velocityIncrement)
         {
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.startingVelocity = startingVelocity;
+            this.velocityIncrement = velocityIncrement;
 
             //convert to radians
             this.minServeAngle = minServeAngle * (MathF.PI / 180);
@@ -69,15 +70,15 @@ namespace PongProject1
                 ScoaringPlayer = 1;
             }
             float? colissionResult = CheckColission();
-            if (colissionResult.HasValue)
-            {
-                float angle;
-                if (Velocity.X < 0)
-                    angle = MapValue(minBounceAngle, maxBounceAngle, (float)colissionResult);
-                else
-                    angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-colissionResult);
-                Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
-            }
+            if (!colissionResult.HasValue) return;
+            totalBounces++;
+            float angle;
+            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+            if (Velocity.X < 0)
+                angle = MapValue(minBounceAngle, maxBounceAngle, (float)colissionResult);
+            else
+                angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-colissionResult);
+            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (startingVelocity + totalBounces * velocityIncrement);
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
@@ -95,6 +96,7 @@ namespace PongProject1
             Visible = true;
             PlayerHasScoared = false;
             ScoaringPlayer = 0;
+            totalBounces = 0;
             float angle;
             // Choose the player that will be served the ball
             if (rng.Next(2) == 0)
@@ -128,10 +130,10 @@ namespace PongProject1
                     continue;
                 // the paddle has passed all checks and is in a colission with the ball
                 // TEMP!!! for now it returns 0 to bounce the ball straingt. Replace later
-                float ballMiddleYPos = Position.Y + texture.Height / 2;
-                float paddleMiddleYPos = paddle.Position.Y + paddle.height / 2;
-                Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / (paddle.height / 2)}");
-                return (paddleMiddleYPos - ballMiddleYPos) / (paddle.height / 2);
+                float ballMiddleYPos = Position.Y + (float)texture.Height / 2;
+                float paddleMiddleYPos = paddle.Position.Y + (float)paddle.height / 2;
+                Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / ((float)paddle.height / 2)}");
+                return (paddleMiddleYPos - ballMiddleYPos) / ((float)paddle.height / 2);
             }
             return null;
         }
