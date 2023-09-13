@@ -18,10 +18,12 @@ namespace PongProject1
         private const float defaultMaxBounceAngle = 140;
 
         private const string ballFileName = "ball";
+        private const string lifeIconFileName = "ball";
         private const string player1PaddleFileName = "bluePaddle";
         private const string player2PaddleFileName = "redPaddle";
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Texture2D lifeIcon;
 
         private Keys player1DownKey = Keys.S;
         private Keys player1UpKey = Keys.W;
@@ -65,6 +67,7 @@ namespace PongProject1
 
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);
+            lifeIcon = Content.Load<Texture2D>(lifeIconFileName);
             base.LoadContent();
         }
 
@@ -145,6 +148,17 @@ namespace PongProject1
             ball.Draw(gameTime, _spriteBatch);
             player1Paddle.Draw(gameTime, _spriteBatch);
             player2Paddle.Draw(gameTime, _spriteBatch);
+
+            // Draw lives of player 1
+            for (int i = 0; i < player1Lives; i++)
+            {
+                _spriteBatch.Draw(lifeIcon, new Vector2(lifeIcon.Width * i, 0), Color.White);
+            }
+            // Draw lives of player 2
+            for (int i = 0; i < player2Lives; i++)
+            {
+                _spriteBatch.Draw(lifeIcon, new Vector2(_graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
+            }
             _spriteBatch.End();
 
             base.Draw(gameTime);
