@@ -25,6 +25,7 @@ namespace PongProject1
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Texture2D lifeIcon;
+        private SpriteFont arialFont;
 
         private Keys player1DownKey = Keys.S;
         private Keys player1UpKey = Keys.W;
@@ -33,6 +34,7 @@ namespace PongProject1
         private Keys pauseKey = Keys.Escape;
         private Keys confirmKey = Keys.Enter;
 
+        private Menu menu;
         private Ball ball;
         private Paddle player1Paddle;
         private Paddle player2Paddle;
@@ -48,6 +50,8 @@ namespace PongProject1
 
         protected override void Initialize()
         {
+            menu = new Menu(this);
+            
             Window.Title = "Pong";
             ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity,
                 defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle, defaultVelocityIncrement);
@@ -56,7 +60,9 @@ namespace PongProject1
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
             player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player2UpKey, player2DownKey, defaultPaddleSpeed, false);
-
+            
+            menu.InitializeMenu();
+            
             base.Initialize();
         }
 
@@ -69,10 +75,11 @@ namespace PongProject1
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);
             lifeIcon = Content.Load<Texture2D>(lifeIconFileName);
+            arialFont = Content.Load<SpriteFont>("arialFont");
             base.LoadContent();
         }
 
-        protected void StartGame()
+        internal void StartGame()
         {
             player1Lives = defaultMaxLives;
             player2Lives = defaultMaxLives;
@@ -96,7 +103,8 @@ namespace PongProject1
         }
         protected override void Update(GameTime gameTime)
         {
-
+            //menu.UpdateMenu(); TODO make the menu update run if not in a match
+            
             ball.Update(gameTime);
 
             if (Keyboard.GetState().IsKeyDown(pauseKey))
@@ -144,6 +152,8 @@ namespace PongProject1
 
         protected override void Draw(GameTime gameTime)
         {
+            //menu.DrawMenu(_spriteBatch, arialFont); TODO only run this if not in match
+            
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
             ball.Draw(gameTime, _spriteBatch);
