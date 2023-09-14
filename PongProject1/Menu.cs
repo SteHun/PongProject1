@@ -8,7 +8,6 @@ namespace PongProject1
 {
     public class Menu //TODO make this class to be accessed by Game1 by changing core methods
     {
-        private GraphicsDeviceManager graphics;
         private Game1 game;
 
         //Menu things
@@ -219,7 +218,7 @@ namespace PongProject1
             //Quick quit key
             if (Keyboard.GetState().IsKeyDown(menuQuitKey) && quitWaitTime == 0 && menuState != MenuState.SelectingKey)
             {
-                //Exit(); TODO fix later
+                game.ExitGame();
             }
 
             //Move to a different menu / some other action when select key is pressed
@@ -296,7 +295,7 @@ namespace PongProject1
                             menuState = MenuState.HowToPlay;
                             break;
                         case (byte)MainMenu.Quit:
-                            //Exit(); TODO fix later
+                            game.ExitGame();
                             break;
                     }
                     menuIndex = 0;

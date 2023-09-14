@@ -41,6 +41,8 @@ namespace PongProject1
         private int player1Lives;
         private int player2Lives;
 
+        private bool menuOpen = true;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -51,7 +53,7 @@ namespace PongProject1
         protected override void Initialize()
         {
             menu = new Menu(this);
-            
+            menu.InitializeMenu();
             Window.Title = "Pong";
             ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity,
                 defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle, defaultVelocityIncrement);
@@ -81,6 +83,7 @@ namespace PongProject1
 
         internal void StartGame()
         {
+            menuOpen = false;
             player1Lives = defaultMaxLives;
             player2Lives = defaultMaxLives;
             player1Paddle.Active = true;
@@ -92,8 +95,14 @@ namespace PongProject1
             player2Paddle.Reset();
         }
 
+        internal void ExitGame()
+        {
+            Exit();
+        }
+
         protected void QuitGame()
         {
+            menuOpen = true;
             player1Paddle.Active = false;
             player1Paddle.Visible = false;
             player2Paddle.Active = false;
@@ -103,15 +112,20 @@ namespace PongProject1
         }
         protected override void Update(GameTime gameTime)
         {
-            //menu.UpdateMenu(); TODO make the menu update run if not in a match
+            if (menuOpen)
+            {
+                menu.UpdateMenu();
+                base.Update(gameTime);
+                return;
+            }
             
             ball.Update(gameTime);
 
-            if (Keyboard.GetState().IsKeyDown(pauseKey))
-            {
-                QuitGame();
-                StartGame();
-            }
+            // if (Keyboard.GetState().IsKeyDown(pauseKey))
+            // {
+            //     QuitGame();
+            //     StartGame();
+            // }
 
             player1Paddle.Update(gameTime);
             player2Paddle.Update(gameTime);
@@ -152,10 +166,11 @@ namespace PongProject1
 
         protected override void Draw(GameTime gameTime)
         {
-            //menu.DrawMenu(_spriteBatch, arialFont); TODO only run this if not in match
-            
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
+            if (menuOpen)
+                menu.DrawMenu(_spriteBatch, arialFont);
+            
             ball.Draw(gameTime, _spriteBatch);
             player1Paddle.Draw(gameTime, _spriteBatch);
             player2Paddle.Draw(gameTime, _spriteBatch);
