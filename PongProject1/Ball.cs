@@ -13,8 +13,8 @@ namespace PongProject1
 
         public bool Active;
         public bool Visible;
-        public bool PlayerHasScoared;
-        public byte ScoaringPlayer;
+        public bool PlayerHasScored;
+        public byte ScoringPlayer;
         private Vector2 startingPosition;
         internal Vector2 Position;
         internal Vector2 Velocity;
@@ -35,11 +35,25 @@ namespace PongProject1
             this.maxBounceAngle = Game1.defaultMaxBounceAngle * (MathF.PI/ 180);
         }
 
-        internal void Load(ContentManager content, string textureFileName, Paddle[] paddles)
+        internal Ball(Game1 game, Vector2 startPos)
         {
-            texture = content.Load<Texture2D>(Game1.ballFileName);
-            startingPosition = new Vector2(game.screenWidth - texture.Width, game.screenHeight - texture.Height) / 2;
-            this.paddles = paddles;
+            this.game = game;
+            startingPosition = startPos;
+            //convert to radians
+            this.minServeAngle = Game1.defaultMinServeAngle * (MathF.PI / 180);
+            this.maxServeAngle = Game1.defaultMaxServeAngle * (MathF.PI / 180);
+            this.minBounceAngle = Game1.defaultMinBounceAngle * (MathF.PI / 180);
+            this.maxBounceAngle = Game1.defaultMaxBounceAngle * (MathF.PI/ 180);
+        }
+
+
+        internal void Load(ContentManager content, string textureFileName, Paddle[] paddlesImport)
+        {
+            texture = content.Load<Texture2D>(textureFileName);
+            // if startingPosition wasn't explicitly set, set it to the centre
+            if (startingPosition == default(Vector2))
+                startingPosition = new Vector2(game.screenWidth - texture.Width, game.screenHeight - texture.Height) / 2;
+            paddles = paddlesImport;
         }
 
         internal void Update(GameTime gameTime)
@@ -54,24 +68,24 @@ namespace PongProject1
             if (Position.X <= 0)
             {
                 Active = false;
-                PlayerHasScoared = true;
-                ScoaringPlayer = 2;
+                PlayerHasScored = true;
+                ScoringPlayer = 2;
             }
             if (Position.X + texture.Width >= game.screenWidth)
             {
                 Active = false;
-                PlayerHasScoared = true;
-                ScoaringPlayer = 1;
+                PlayerHasScored = true;
+                ScoringPlayer = 1;
             }
-            float? colissionResult = CheckColission();
-            if (!colissionResult.HasValue) return;
+            float? collisionResult = CheckCollision();
+            if (!collisionResult.HasValue) return;
             totalBounces++;
             float angle;
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (Velocity.X < 0)
-                angle = MapValue(minBounceAngle, maxBounceAngle, (float)colissionResult);
+                angle = MapValue(minBounceAngle, maxBounceAngle, (float)collisionResult);
             else
-                angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-colissionResult);
+                angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (Game1.defaultStartingVelocity + totalBounces * Game1.defaultVelocityIncrement);
         }
 
@@ -88,8 +102,8 @@ namespace PongProject1
             Position = startingPosition;
             Active = true;
             Visible = true;
-            PlayerHasScoared = false;
-            ScoaringPlayer = 0;
+            PlayerHasScored = false;
+            ScoringPlayer = 0;
             totalBounces = 0;
             float angle;
             // Choose the player that will be served the ball
@@ -105,8 +119,8 @@ namespace PongProject1
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * Game1.defaultStartingVelocity;
         }
 
-        // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no colission
-        private float? CheckColission()
+        // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no collision
+        private float? CheckCollision()
         {
             bool isMovingRight = Velocity.X > 0;
             foreach(Paddle paddle in paddles)
@@ -122,8 +136,8 @@ namespace PongProject1
                 // in the ball in the correct y position for it to hit this paddle?
                 if (!(Position.Y + texture.Height >= paddle.Position.Y && Position.Y <= paddle.Position.Y + paddle.height))
                     continue;
-                // the paddle has passed all checks and is in a colission with the ball
-                // TEMP!!! for now it returns 0 to bounce the ball straingt. Replace later
+                // the paddle has passed all checks and is in a collision with the ball
+                // TEMP!!! for now it returns 0 to bounce the ball straight. Replace later
                 float ballMiddleYPos = Position.Y + (float)texture.Height / 2;
                 float paddleMiddleYPos = paddle.Position.Y + (float)paddle.height / 2;
                 Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / ((float)paddle.height / 2)}");
@@ -133,7 +147,7 @@ namespace PongProject1
         }
 
         // chooses a value between min and max based on the value (with range -1 to 1)
-        private float MapValue(float min, float max, float value)
+        private static float MapValue(float min, float max, float value)
         {
             // value can't be higher than 1 or lower than -1
             if (value < 0)

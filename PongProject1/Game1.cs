@@ -19,7 +19,7 @@ namespace PongProject1
         internal const float defaultMaxBounceAngle = 140;
 
         internal const string ballFileName = "ball";
-        internal const string lifeIconFileName = "ball";
+        private const string lifeIconFileName = "ball";
         internal const string player1PaddleFileName = "bluePaddle";
         internal const string player2PaddleFileName = "redPaddle";
         internal int screenWidth;
@@ -140,9 +140,9 @@ namespace PongProject1
             player1Paddle.Update(gameTime);
             player2Paddle.Update(gameTime);
 
-            if (ball.PlayerHasScoared)
+            if (ball.PlayerHasScored)
             {
-                if (ball.ScoaringPlayer == 1)
+                if (ball.ScoringPlayer == 1)
                 {
                     player2Lives--;
                     if (player2Lives <= 0)
