@@ -9,8 +9,8 @@ namespace PongProject1
     internal class Ball
     {
         // test
+        private Game1 game;
 
-        private int screenWidth, screenHeight;
         public bool Active;
         public bool Visible;
         public bool PlayerHasScoared;
@@ -19,32 +19,26 @@ namespace PongProject1
         internal Vector2 Position;
         internal Vector2 Velocity;
         private Texture2D texture;
-        private float startingVelocity;
-        private float velocityIncrement;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
         private float maxBounceAngle;
         private int totalBounces;
         private Paddle[] paddles;
-        internal Ball(int screenWidth, int screenHeight, float startingVelocity, float minServeAngle, float maxServeAngle, float minBounceAngle, float maxBounceAngle, float velocityIncrement)
+        internal Ball(Game1 game)
         {
-            this.screenWidth = screenWidth;
-            this.screenHeight = screenHeight;
-            this.startingVelocity = startingVelocity;
-            this.velocityIncrement = velocityIncrement;
-
+            this.game = game;
             //convert to radians
-            this.minServeAngle = minServeAngle * (MathF.PI / 180);
-            this.maxServeAngle = maxServeAngle * (MathF.PI / 180);
-            this.minBounceAngle = minBounceAngle * (MathF.PI / 180);
-            this.maxBounceAngle = maxBounceAngle* (MathF.PI/ 180);
+            this.minServeAngle = Game1.defaultMinServeAngle * (MathF.PI / 180);
+            this.maxServeAngle = Game1.defaultMaxServeAngle * (MathF.PI / 180);
+            this.minBounceAngle = Game1.defaultMinBounceAngle * (MathF.PI / 180);
+            this.maxBounceAngle = Game1.defaultMaxBounceAngle * (MathF.PI/ 180);
         }
 
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddles)
         {
-            texture = content.Load<Texture2D>(textureFileName);
-            startingPosition = new Vector2(screenWidth - texture.Width, screenHeight - texture.Height) / 2;
+            texture = content.Load<Texture2D>(Game1.ballFileName);
+            startingPosition = new Vector2(game.screenWidth - texture.Width, game.screenHeight - texture.Height) / 2;
             this.paddles = paddles;
         }
 
@@ -54,7 +48,7 @@ namespace PongProject1
                 return;
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // bounce the ball
-            if (Position.Y <= 0 || Position.Y + texture.Height >= screenHeight)
+            if (Position.Y <= 0 || Position.Y + texture.Height >= game.screenHeight)
                 Velocity.Y *= -1;
 
             if (Position.X <= 0)
@@ -63,7 +57,7 @@ namespace PongProject1
                 PlayerHasScoared = true;
                 ScoaringPlayer = 2;
             }
-            if (Position.X + texture.Width >= screenWidth)
+            if (Position.X + texture.Width >= game.screenWidth)
             {
                 Active = false;
                 PlayerHasScoared = true;
@@ -78,7 +72,7 @@ namespace PongProject1
                 angle = MapValue(minBounceAngle, maxBounceAngle, (float)colissionResult);
             else
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-colissionResult);
-            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (startingVelocity + totalBounces * velocityIncrement);
+            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (Game1.defaultStartingVelocity + totalBounces * Game1.defaultVelocityIncrement);
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
@@ -108,7 +102,7 @@ namespace PongProject1
             {
                 angle = (float)rng.NextDouble() * (maxServeAngle - minServeAngle) + minServeAngle + MathF.PI;
             }
-            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * startingVelocity;
+            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * Game1.defaultStartingVelocity;
         }
 
         // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no colission

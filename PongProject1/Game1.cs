@@ -6,22 +6,25 @@ namespace PongProject1
 {
     public class Game1 : Game
     {
-        private const int defaultPaddleHeight = 100;
-        private const int defaultPaddleSpeed = 300;
-        private const int defaultPaddleDistanceFromEdge = 40;
-        private const int defaultMaxLives = 3;
+        internal const int defaultPaddleHeight = 100;
+        internal const int defaultPaddleSpeed = 300;
+        internal const int defaultPaddleDistanceFromEdge = 40;
+        internal const int defaultMaxLives = 3;
 
-        private const float defaultStartingVelocity = 200;
-        private const float defaultVelocityIncrement = 10;
-        private const float defaultMinServeAngle = 60;
-        private const float defaultMaxServeAngle = 120;
-        private const float defaultMinBounceAngle = 40;
-        private const float defaultMaxBounceAngle = 140;
+        internal const float defaultStartingVelocity = 200;
+        internal const float defaultVelocityIncrement = 10;
+        internal const float defaultMinServeAngle = 60;
+        internal const float defaultMaxServeAngle = 120;
+        internal const float defaultMinBounceAngle = 40;
+        internal const float defaultMaxBounceAngle = 140;
 
-        private const string ballFileName = "ball";
-        private const string lifeIconFileName = "ball";
-        private const string player1PaddleFileName = "bluePaddle";
-        private const string player2PaddleFileName = "redPaddle";
+        internal const string ballFileName = "ball";
+        internal const string lifeIconFileName = "ball";
+        internal const string player1PaddleFileName = "bluePaddle";
+        internal const string player2PaddleFileName = "redPaddle";
+        internal int screenWidth;
+        internal int screenHeight;
+        
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Texture2D lifeIcon;
@@ -48,6 +51,8 @@ namespace PongProject1
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
+            screenWidth = _graphics.PreferredBackBufferWidth;
+            screenHeight = _graphics.PreferredBackBufferHeight;
         }
 
         protected override void Initialize()
@@ -55,8 +60,13 @@ namespace PongProject1
             menu = new Menu(this);
             menu.InitializeMenu();
             Window.Title = "Pong";
-            ball = new Ball(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight, defaultStartingVelocity,
-                defaultMinServeAngle, defaultMaxServeAngle, defaultMinBounceAngle, defaultMaxBounceAngle, defaultVelocityIncrement);
+            
+            // required vars: 
+            // screen width / height
+            // settings
+            // 
+            
+            ball = new Ball(this);
             int windowHeight = _graphics.PreferredBackBufferHeight;
             player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
                 defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
