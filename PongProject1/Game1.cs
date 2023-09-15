@@ -18,7 +18,6 @@ namespace PongProject1
         internal int defaultPaddleHeight = 100;
         internal int defaultPaddleSpeed = 300;
         internal int defaultPaddleDistanceFromEdge = 40;
-        internal int defaultMaxLives = 3;
 
         internal float defaultStartingVelocity = 200;
         internal float defaultVelocityIncrement = 10;

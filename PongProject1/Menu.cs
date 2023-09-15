@@ -23,9 +23,9 @@ namespace PongProject1
         private readonly string[] playerType = {"Human", "AI Easy", "AI Hard"};
         private readonly int[] lives = { 1, 2, 3, 4, 5 };
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
-        private byte player1LivesIndex;
+        private byte player1LivesIndex = 2;
         private byte player2TypeIndex;
-        private byte player2LivesIndex;
+        private byte player2LivesIndex = 2;
 
         //Keybinds
         private byte variablePosition; //This is used to indicate what keybind is being changed
@@ -73,9 +73,6 @@ namespace PongProject1
             MenuMovement();
             CheckForKeybind();
 
-            //TODO Expand and finish other menus
-            //TODO (missing how to play, and the functionality of music and sound effect toggles (if we are to add those))
-
             if(quitWaitTime > 0) quitWaitTime--;
             if (noInputWaitTime > 0) noInputWaitTime--;
             if (Keyboard.GetState().IsKeyDown(menuUpKey) || Keyboard.GetState().IsKeyDown(menuDownKey)) //Removes tip on how to use menu if menu button is pressed
@@ -91,8 +88,7 @@ namespace PongProject1
                 case MenuState.MainMenu:
                     MenuString("Start", 0);
                     MenuString("Settings", 1);
-                    MenuString("Hot to play", 2);
-                    MenuString("Quit", 3);
+                    MenuString("Quit", 2);
 
                     //The tooltip message if the player doesn't move in the main menu for 15 seconds
                     if (noInputWaitTime == 0)
@@ -124,9 +120,7 @@ namespace PongProject1
 
                 case MenuState.Settings:
                     MenuString("Controls", 0);
-                    MenuString("Music", 1);
-                    MenuString("Sound effects", 2);
-                    MenuString("Back", 3);
+                    MenuString("Back", 1);
                     break;
 
                 case MenuState.Controls:
@@ -194,9 +188,8 @@ namespace PongProject1
                     menuLength = (byte)Enum.GetNames(typeof(Settings)).Length;
                     break;
                 case MenuState.Controls:
-                    menuLength = (byte)Enum.GetNames(typeof(Controls)).Length;
+                    menuLength = 12; //Controls does not contain an enum element for every element in the list, so hardcoded
                     break;
-
             }
 
             menuLength--; //Menu starts counting at 0, so length is 1 more than highest value element, this corrects for that
@@ -295,10 +288,6 @@ namespace PongProject1
                         case (byte)MainMenu.Settings:
                             menuState = MenuState.Settings;
                             break;
-                        case (byte)MainMenu.HowToPlay:
-                            //Add how to play screen/text
-                            menuState = MenuState.HowToPlay;
-                            break;
                         case (byte)MainMenu.Quit:
                             game.ExitGame();
                             break;
@@ -337,63 +326,23 @@ namespace PongProject1
                     {
                         case (byte)Settings.Controls:
                             menuState = MenuState.Controls;
-                            menuIndex = 0;
-                            break;
-                        case (byte)Settings.Music:
-                            //Add togglable music
-                            break;
-                        case (byte)Settings.SoundEffects:
-                            //Add togglable sound effects
                             break;
                         case (byte)Settings.Back:
                             menuState = MenuState.MainMenu;
-                            menuIndex = 0;
                             break;
                     }
+                    menuIndex = 0;
                     break;
 
                 case MenuState.Controls:
-                    switch (menuIndex)
+                    if(menuIndex == (byte)Controls.Back)
                     {
-                        case (byte)Controls.MenuMoveUp:
-                            variablePosition = 0;
-                            break;
-                        case (byte)Controls.MenuMoveDown:
-                            variablePosition = 1;
-                            break;
-                        case (byte)Controls.MenuSelect:
-                            variablePosition = 2;
-                            break;
-                        case (byte)Controls.QuickQuit:
-                            variablePosition = 3;
-                            break;
-                        case (byte)Controls.QuickStartMode:
-                            variablePosition = 4;
-                            break;
-                        case (byte)Controls.DebugMode:
-                            variablePosition = 5;
-                            break;
-                        case (byte)Controls.Pause:
-                            variablePosition = 6;
-                            break;
-                        case (byte)Controls.Player1Up:
-                            variablePosition = 7;
-                            break;
-                        case (byte)Controls.Player1Down:
-                            variablePosition = 8;
-                            break;
-                        case (byte)Controls.Player2Up:
-                            variablePosition = 9;
-                            break;
-                        case (byte)Controls.Player2Down:
-                            variablePosition = 10;
-                            break;
-                        case (byte)Controls.Back:
-                            menuState = MenuState.Settings;
-                            menuIndex = 0;
-                            return;
+                        menuState = MenuState.Settings;
+                        menuIndex = 0;
+                        return;
                     }
-                    
+
+                    variablePosition = menuIndex;
                     menuState = MenuState.SelectingKey;
                     break;
 
@@ -502,7 +451,6 @@ namespace PongProject1
             MainMenu,
             Lobby,
             Settings,
-            HowToPlay,
             Controls,
             SelectingKey,
             Winner,
@@ -512,7 +460,6 @@ namespace PongProject1
         {
             Start,
             Settings,
-            HowToPlay,
             Quit
         }
 
@@ -529,24 +476,11 @@ namespace PongProject1
         enum Settings : byte //All selectable options within Settings
         {
             Controls,
-            Music, //If we add this
-            SoundEffects, //If we add this
             Back,
         }
 
         enum Controls : byte
         {
-            MenuMoveUp,
-            MenuMoveDown,
-            MenuSelect,
-            QuickQuit,
-            DebugMode,
-            QuickStartMode,
-            Pause,
-            Player1Up,
-            Player1Down,
-            Player2Up,
-            Player2Down,
             Back,
         }
         #endregion
