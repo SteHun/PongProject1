@@ -17,7 +17,7 @@ namespace PongProject1
         private Vector2 startingPosition;
         internal Vector2 Position;
         internal Vector2 Velocity;
-        private Texture2D texture;
+        internal Texture2D Texture;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
@@ -48,10 +48,10 @@ namespace PongProject1
 
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddlesImport)
         {
-            texture = content.Load<Texture2D>(textureFileName);
+            Texture = content.Load<Texture2D>(textureFileName);
             // if startingPosition wasn't explicitly set, set it to the centre
             if (startingPosition == default(Vector2))
-                startingPosition = new Vector2(game.screenWidth - texture.Width, game.screenHeight - texture.Height) / 2;
+                startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
             paddles = paddlesImport;
         }
 
@@ -61,7 +61,7 @@ namespace PongProject1
                 return;
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // bounce the ball
-            if (Position.Y <= 0 || Position.Y + texture.Height >= game.screenHeight)
+            if (Position.Y <= 0 || Position.Y + Texture.Height >= game.screenHeight)
                 Velocity.Y *= -1;
 
             if (Position.X <= 0)
@@ -70,7 +70,7 @@ namespace PongProject1
                 PlayerHasScored = true;
                 ScoringPlayer = 2;
             }
-            if (Position.X + texture.Width >= game.screenWidth)
+            if (Position.X + Texture.Width >= game.screenWidth)
             {
                 Active = false;
                 PlayerHasScored = true;
@@ -92,7 +92,7 @@ namespace PongProject1
         {
             if (!Visible)
                 return;
-            _spriteBatch.Draw(texture, Position, Color.White);
+            _spriteBatch.Draw(Texture, Position, Color.White);
         }
 
         internal void Respawn()
@@ -130,14 +130,14 @@ namespace PongProject1
                 if (!isMovingRight && !paddle.IsFacingRight)
                     continue;
                 // is the ball in the correct x position for it it hit this paddle? 
-                if (!(Position.X + texture.Width >= paddle.Position.X && Position.X <= paddle.Position.X + paddle.width))
+                if (!(Position.X + Texture.Width >= paddle.Position.X && Position.X <= paddle.Position.X + paddle.width))
                     continue;
                 // in the ball in the correct y position for it to hit this paddle?
-                if (!(Position.Y + texture.Height >= paddle.Position.Y && Position.Y <= paddle.Position.Y + paddle.height))
+                if (!(Position.Y + Texture.Height >= paddle.Position.Y && Position.Y <= paddle.Position.Y + paddle.height))
                     continue;
                 // the paddle has passed all checks and is in a collision with the ball
                 // TEMP!!! for now it returns 0 to bounce the ball straight. Replace later
-                float ballMiddleYPos = Position.Y + (float)texture.Height / 2;
+                float ballMiddleYPos = Position.Y + (float)Texture.Height / 2;
                 float paddleMiddleYPos = paddle.Position.Y + (float)paddle.height / 2;
                 Debug.WriteLine($"distance from middle: {ballMiddleYPos - paddleMiddleYPos}|result: {(ballMiddleYPos - paddleMiddleYPos) / ((float)paddle.height / 2)}");
                 return (paddleMiddleYPos - ballMiddleYPos) / ((float)paddle.height / 2);

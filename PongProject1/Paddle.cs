@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Data;
+using System.Diagnostics;
 
 namespace PongProject1
 {
@@ -17,17 +19,21 @@ namespace PongProject1
         internal int width;
         internal bool IsFacingRight;
 
+        private Ball ball;
         private int screenHeight;
+        private int screenWidth;
         private Texture2D texture;
         private Vector2 startingPosition;
         private Keys upKey;
         private Keys downKey;
-        internal Paddle(Vector2 startingPosition, int height, int screenHeight, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType)
+        internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball)
         {
+            this.ball = ball;
             type = playerType;
             this.startingPosition = startingPosition;
             this.height = height;
             this.screenHeight = screenHeight;
+            this.screenWidth = screenWidth;
             this.upKey = upKey;
             this.downKey = downKey;
             Speed = speed;
@@ -37,9 +43,11 @@ namespace PongProject1
         
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
         {
+            ball = game.ball;
             type = playerType;
             this.height = game.Settings.defaultPaddleHeight;
             this.screenHeight = game.screenHeight;
+            this.screenWidth = game.screenWidth;
             this.upKey = upKey;
             this.downKey = downKey;
             Speed = game.Settings.defaultPaddleSpeed;
@@ -122,8 +130,51 @@ namespace PongProject1
         
         internal float HardAIUpdate(GameTime gameTime)
         {
-            // TODO make hard AI
-            return 0;
+            float totalMovement = 0;
+            float targetPosition;
+            // if the ball is facing your way
+            if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
+            {
+                targetPosition = getPredictedBallPosition(gameTime) - ((float)height / 2);
+            }
+            else
+            {
+                targetPosition = (float)(screenHeight - height) / 2;
+            }
+            if (Position.Y > targetPosition)
+            {
+                totalMovement -= MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
+            }
+            else if (Position.Y < targetPosition)
+            {
+                totalMovement += MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, targetPosition - Position.Y);
+            }
+            return totalMovement;
+        }
+
+        private float getPredictedBallPosition(GameTime gameTime)
+        {
+            FakeBall fakeBall = new FakeBall(this.ball, screenHeight);
+            float leftXpos, rightXpos;
+            if (IsFacingRight)
+            {
+                leftXpos = Position.X;
+                rightXpos = screenWidth - Position.X;
+            }
+            else
+            {
+                rightXpos = Position.X;
+                leftXpos = screenWidth - Position.X;
+            }
+
+            while (fakeBall.Position.X >= leftXpos && fakeBall.Position.X <= rightXpos)
+            {
+                // NOTE: This could be inaccurate
+                // This assumes the game runs at a consistent framerate
+                fakeBall.Update(gameTime);
+            }
+            Debug.WriteLine(fakeBall.Position.Y);
+            return fakeBall.Position.Y;
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
@@ -132,6 +183,29 @@ namespace PongProject1
                 return;
             _spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
 
+        }
+    }
+
+    internal class FakeBall
+    {
+        internal Vector2 Position;
+        internal Vector2 Velocity;
+        private int screenHeight;
+        private int height;
+        internal FakeBall(Ball ball, int screenHeight)
+        {
+            this.screenHeight = screenHeight;
+            Position = ball.Position;
+            Velocity = ball.Velocity;
+            height = ball.Texture.Height;
+        }
+
+        internal void Update(GameTime gameTime)
+        {
+            Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // bounce the ball
+            if (Position.Y <= 0 || Position.Y + height >= screenHeight)
+                Velocity.Y *= -1;
         }
     }
 }

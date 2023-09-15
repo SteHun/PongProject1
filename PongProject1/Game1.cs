@@ -53,7 +53,7 @@ namespace PongProject1
         // declares struct and sets default values
 
         private Menu menu;
-        private Ball ball;
+        internal Ball ball;
         private Paddle player1Paddle;
         private Paddle player2Paddle;
         private int player1Lives;
@@ -100,11 +100,11 @@ namespace PongProject1
         internal void StartGame(int livesPlayer1, int livesPlayer2, int typePlayer1, int typePlayer2)
         {
             
+            ball = new Ball(this);
             player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true, typePlayer1);
             player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false, typePlayer2);
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);
-            ball = new Ball(this);
             ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
             
             menuOpen = false;
