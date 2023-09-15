@@ -204,8 +204,16 @@ namespace PongProject1
         {
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // bounce the ball
-            if (Position.Y <= 0 || Position.Y + height >= screenHeight)
+            if (Position.Y <= 0)
+            {
                 Velocity.Y *= -1;
+                Position.Y = 0;
+            }
+            else if (Position.Y + height >= screenHeight)
+            {
+                Velocity.Y *= -1;
+                Position.Y = screenHeight - height;
+            }
         }
     }
 }

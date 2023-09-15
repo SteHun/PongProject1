@@ -58,11 +58,22 @@ namespace PongProject1
         internal void Update(GameTime gameTime)
         {
             if (!Active)
+            {
                 return;
+            }
+
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             // bounce the ball
-            if (Position.Y <= 0 || Position.Y + Texture.Height >= game.screenHeight)
+            if (Position.Y <= 0)
+            {
                 Velocity.Y *= -1;
+                Position.Y = 0;
+            }
+            else if (Position.Y + Texture.Height >= game.screenHeight)
+            {
+                Velocity.Y *= -1;
+                Position.Y = game.screenHeight - Texture.Height;
+            }
 
             if (Position.X <= 0)
             {
@@ -77,14 +88,23 @@ namespace PongProject1
                 ScoringPlayer = 1;
             }
             float? collisionResult = CheckCollision();
-            if (!collisionResult.HasValue) return;
+            if (!collisionResult.HasValue)
+            {
+                return;
+            }
+
             totalBounces++;
             float angle;
             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
             if (Velocity.X < 0)
+            {
                 angle = MapValue(minBounceAngle, maxBounceAngle, (float)collisionResult);
+            }
             else
+            {
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
+            }
+
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
         }
 
