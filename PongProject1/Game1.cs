@@ -7,12 +7,16 @@ namespace PongProject1
     
     internal struct SettingsStruct
     {
+        internal Keys menuDownKey = Keys.Down;
+        internal Keys menuUpKey = Keys.Up;
+        internal Keys debugModeKey = Keys.Insert;
         internal Keys player1DownKey = Keys.S;
         internal Keys player1UpKey = Keys.W;
         internal Keys player2DownKey = Keys.Down;
         internal Keys player2UpKey = Keys.Up;
         internal Keys pauseKey = Keys.P;
         internal Keys quitKey = Keys.Escape;
+        internal Keys quickStartKey = Keys.Home;
 
         internal readonly int defaultPaddleHeight = 100;
         internal readonly int defaultPaddleSpeed = 300;
