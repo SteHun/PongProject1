@@ -34,7 +34,7 @@ namespace PongProject1
     
     public class Game1 : Game
     {
-        internal SettingsStruct Settings = new SettingsStruct();
+        internal SettingsStruct Settings = new ();
         internal const string ballFileName = "ball";
         private const string lifeIconFileName = "ball";
         internal const string player1PaddleFileName = "bluePaddle";
@@ -43,12 +43,11 @@ namespace PongProject1
         internal int screenHeight;
         private const string pausedText = "GAME PAUSED";
         
-        private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private GraphicsDeviceManager graphics;
+        public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
-        private SpriteFont arialFont;
+        public SpriteFont arialFont;
         // declares struct and sets default values
-        
 
         private Menu menu;
         private Ball ball;
@@ -63,11 +62,11 @@ namespace PongProject1
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
-            screenWidth = _graphics.PreferredBackBufferWidth;
-            screenHeight = _graphics.PreferredBackBufferHeight;
+            screenWidth = graphics.PreferredBackBufferWidth;
+            screenHeight = graphics.PreferredBackBufferHeight;
         }
 
         protected override void Initialize()
@@ -92,7 +91,7 @@ namespace PongProject1
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
 
@@ -103,11 +102,11 @@ namespace PongProject1
             base.LoadContent();
         }
 
-        internal void StartGame()
+        internal void StartGame(int livesPlayer1, int livesPlayer2)
         {
             menuOpen = false;
-            player1Lives = Settings.defaultMaxLives;
-            player2Lives = Settings.defaultMaxLives;
+            player1Lives = livesPlayer1;
+            player2Lives = livesPlayer2;
             player1Paddle.Active = true;
             player1Paddle.Visible = true;
             player2Paddle.Active = true;
@@ -195,7 +194,7 @@ namespace PongProject1
 
 
 
-                // Code for handeling resetting the field (a timeout???) here
+                // Code for handling resetting the field (a timeout???) here
                 ball.Respawn();
             }
 
@@ -205,33 +204,42 @@ namespace PongProject1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
+            spriteBatch.Begin();
             if (menuOpen)
-                menu.DrawMenu(_spriteBatch, arialFont);
+                menu.DrawMenu();
             
-            ball.Draw(gameTime, _spriteBatch);
-            player1Paddle.Draw(gameTime, _spriteBatch);
-            player2Paddle.Draw(gameTime, _spriteBatch);
+            ball.Draw(gameTime, spriteBatch);
+            player1Paddle.Draw(gameTime, spriteBatch);
+            player2Paddle.Draw(gameTime, spriteBatch);
 
-            // Draw lives of player 1
-            for (int i = 0; i < player1Lives; i++)
+            if (!menuOpen)
             {
-                _spriteBatch.Draw(lifeIcon, new Vector2(lifeIcon.Width * i, 0), Color.White);
+                // Draw lives of player 1
+                for (int i = 0; i < player1Lives; i++)
+                {
+                    spriteBatch.Draw(lifeIcon, new Vector2(lifeIcon.Width * i, 0), Color.White);
+                }
+                // Draw lives of player 2
+                for (int i = 0; i < player2Lives; i++)
+                {
+                    spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
+                }
             }
+            spriteBatch.End();
             // Draw lives of player 2
             for (int i = 0; i < player2Lives; i++)
             {
-                _spriteBatch.Draw(lifeIcon, new Vector2(_graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
+                spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
             }
 
             if (gamePaused)
             {
                 Vector2 textSize = arialFont.MeasureString(pausedText);
                 Vector2 textPosition = new Vector2(screenWidth - textSize.X, screenHeight - textSize.Y) / 2;
-                _spriteBatch.DrawString(arialFont, pausedText, textPosition, Color.Black);
+                spriteBatch.DrawString(arialFont, pausedText, textPosition, Color.Black);
             }
             
-            _spriteBatch.End();
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
