@@ -29,6 +29,20 @@ namespace PongProject1
         private SpriteBatch _spriteBatch;
         private Texture2D lifeIcon;
         private SpriteFont arialFont;
+        // declares struct and sets default values
+        internal struct Settings
+        {
+            internal Keys player1DownKey = Keys.S;
+            internal Keys player1UpKey = Keys.W;
+            internal Keys player2DownKey = Keys.Down;
+            internal Keys player2UpKey = Keys.Up;
+            internal Keys pauseKey = Keys.Escape;
+            internal Keys confirmKey = Keys.Enter;
+
+            public Settings()
+            {
+            }
+        }
 
         internal Keys player1DownKey = Keys.S;
         internal Keys player1UpKey = Keys.W;
