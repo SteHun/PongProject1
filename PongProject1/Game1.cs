@@ -41,6 +41,7 @@ namespace PongProject1
         internal const string player2PaddleFileName = "redPaddle";
         internal int screenWidth;
         internal int screenHeight;
+        private const string pausedText = "GAME PAUSED";
         
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -57,6 +58,8 @@ namespace PongProject1
         private int player2Lives;
 
         private bool menuOpen = true;
+        private bool gamePaused;
+        private bool pauseKeyPressedLastFrame;
 
         public Game1()
         {
@@ -137,6 +140,22 @@ namespace PongProject1
                 base.Update(gameTime);
                 return;
             }
+
+            if (Keyboard.GetState().IsKeyDown(Settings.pauseKey) && !pauseKeyPressedLastFrame)
+            {
+                gamePaused = !gamePaused;
+                pauseKeyPressedLastFrame = true;
+            }
+            else if (!Keyboard.GetState().IsKeyDown(Settings.pauseKey))
+            {
+                pauseKeyPressedLastFrame = false;
+            }
+
+            if (gamePaused)
+            {
+                base.Update(gameTime);
+                return;
+            }
             
             ball.Update(gameTime);
 
@@ -204,6 +223,14 @@ namespace PongProject1
             {
                 _spriteBatch.Draw(lifeIcon, new Vector2(_graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
             }
+
+            if (gamePaused)
+            {
+                Vector2 textSize = arialFont.MeasureString(pausedText);
+                Vector2 textPosition = new Vector2(screenWidth - textSize.X, screenHeight - textSize.Y) / 2;
+                _spriteBatch.DrawString(arialFont, pausedText, textPosition, Color.Black);
+            }
+            
             _spriteBatch.End();
 
             base.Draw(gameTime);
