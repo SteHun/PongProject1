@@ -30,12 +30,12 @@ namespace PongProject1
         private Texture2D lifeIcon;
         private SpriteFont arialFont;
 
-        private Keys player1DownKey = Keys.S;
-        private Keys player1UpKey = Keys.W;
-        private Keys player2DownKey = Keys.Down;
-        private Keys player2UpKey = Keys.Up;
-        private Keys pauseKey = Keys.Escape;
-        private Keys confirmKey = Keys.Enter;
+        internal Keys player1DownKey = Keys.S;
+        internal Keys player1UpKey = Keys.W;
+        internal Keys player2DownKey = Keys.Down;
+        internal Keys player2UpKey = Keys.Up;
+        internal Keys pauseKey = Keys.Escape;
+        internal Keys confirmKey = Keys.Enter;
 
         private Menu menu;
         private Ball ball;
@@ -67,12 +67,9 @@ namespace PongProject1
             // 
             
             ball = new Ball(this);
-            int windowHeight = _graphics.PreferredBackBufferHeight;
-            player1Paddle = new Paddle(new Vector2(defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
-                defaultPaddleHeight, windowHeight, player1UpKey, player1DownKey, defaultPaddleSpeed, true);
-            player2Paddle = new Paddle(new Vector2(_graphics.PreferredBackBufferWidth - defaultPaddleDistanceFromEdge, (float)(windowHeight - defaultPaddleHeight) / 2),
-                defaultPaddleHeight, windowHeight, player2UpKey, player2DownKey, defaultPaddleSpeed, false);
-            
+            player1Paddle = new Paddle(this, player1UpKey, player1DownKey, true);
+            player2Paddle = new Paddle(this, player2UpKey, player2DownKey, false);
+
             menu.InitializeMenu();
             
             base.Initialize();
