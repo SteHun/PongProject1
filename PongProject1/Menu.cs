@@ -341,7 +341,7 @@ namespace PongProject1
                     break;
 
                 case MenuState.Controls:
-                    if(menuIndex == (byte)Controls.Back)
+                    if(menuIndex == 11) //Back button
                     {
                         menuState = MenuState.Settings;
                         menuIndex = 0;
@@ -490,11 +490,7 @@ namespace PongProject1
             Controls,
             Back,
         }
-
-        enum Controls : byte
-        {
-            Back,
-        }
+        
         #endregion
     }
 }
