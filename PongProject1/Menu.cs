@@ -1,14 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
+// ReSharper disable InconsistentNaming
 
 namespace PongProject1
 {
-    public class Menu //TODO make this class to be accessed by Game1 by changing core methods
+    public class Menu
     {
-        private Game1 game;
+        private readonly Game1 game;
 
         //Menu things
         private byte menuIndex; //Keeps track of what the player has selected in the menu
@@ -29,26 +29,27 @@ namespace PongProject1
 
         //Keybinds
         private byte variablePosition; //This is used to indicate what keybind is being changed
-        private Keys menuUpKey;
+        private Keys menuUpKey; //These are menu specific keybinds, other keybinds are stored in Game1 Settings struct
         private Keys menuDownKey;
         private Keys menuSelectKey;
         private Keys debugModeKey;
         private Keys quickStartKey;
 
-        private bool menuUpHeld; //Used for menu movement
-        private bool menuDownHeld; //Used for menu movement
+        //Checks if key is being held down, used to avoid inputting action every frame and instead only on first frame of press
+        private bool menuUpHeld;
+        private bool menuDownHeld;
         private bool menuSelectHeld;
         private bool debugModeHeld;
         private bool quickStartHeld;
-        private bool pauseHeld;
         
-        private string winningPlayer = "";
+        private string winningPlayer;
 
         public Menu(Game1 game)
         {
             this.game = game;
         }
 
+        #region Initialize method
         public void InitializeMenu()
         {
             //Menu setup
@@ -67,7 +68,9 @@ namespace PongProject1
             debugModeKey = Keys.F1;
             quickStartKey = Keys.F2;
         }
-        
+        #endregion
+
+        #region Update method
         public void UpdateMenu()
         {
             MenuMovement();
@@ -80,7 +83,9 @@ namespace PongProject1
                 noInputWaitTime = 900;
             }
         }
+        #endregion
 
+        #region Draw method
         public void DrawMenu()
         {
             switch (menuState)
@@ -161,6 +166,7 @@ namespace PongProject1
                     break;
             }
         }
+        #endregion
 
         #region Menu Methods
         private Color MenuEntryColor(byte menuPosition) //Highlights text if selected
@@ -354,6 +360,7 @@ namespace PongProject1
         }
         #endregion
 
+        #region Other methods
         private void CheckForKeybind()
         {
             if (menuState != MenuState.SelectingKey) return;
@@ -405,6 +412,7 @@ namespace PongProject1
             menuState = MenuState.Controls;
         }
 
+        #region ToggleNext method variants
         private int ToggleNext(int[] array, byte index) //Get next element in array (and loop if necessary)
         {
             if (index == array.Length - 1)
@@ -424,6 +432,7 @@ namespace PongProject1
 
             return index + 1;
         }
+        #endregion
 
         public void GameOver(string winner)
         {
@@ -432,6 +441,7 @@ namespace PongProject1
             winningPlayer = winner;
         }
 
+        #region MenuString methods
         //This method is used to more quickly type DrawString(), which has multiple parameters that are constantly the same
         private void MenuString(string text, byte index)
         {
@@ -443,7 +453,9 @@ namespace PongProject1
         {
             game.spriteBatch.DrawString(game.arialFont, text, menu2ndRowTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
         }
-
+        #endregion
+        #endregion
+        
         #region Menu Enums
 
         enum MenuState : byte //What menu is currently selected
@@ -484,6 +496,5 @@ namespace PongProject1
             Back,
         }
         #endregion
-
     }
 }

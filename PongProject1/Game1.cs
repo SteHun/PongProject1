@@ -12,19 +12,18 @@ namespace PongProject1
         internal Keys player2DownKey = Keys.Down;
         internal Keys player2UpKey = Keys.Up;
         internal Keys pauseKey = Keys.P;
-        internal Keys confirmKey = Keys.Enter;
         internal Keys quitKey = Keys.Escape;
 
-        internal int defaultPaddleHeight = 100;
-        internal int defaultPaddleSpeed = 300;
-        internal int defaultPaddleDistanceFromEdge = 40;
+        internal readonly int defaultPaddleHeight = 100;
+        internal readonly int defaultPaddleSpeed = 300;
+        internal readonly int defaultPaddleDistanceFromEdge = 40;
 
-        internal float defaultStartingVelocity = 200;
-        internal float defaultVelocityIncrement = 10;
-        internal float defaultMinServeAngle = 60;
-        internal float defaultMaxServeAngle = 120;
-        internal float defaultMinBounceAngle = 40;
-        internal float defaultMaxBounceAngle = 140;
+        internal readonly float defaultStartingVelocity = 240;
+        internal readonly float defaultVelocityIncrement = 30;
+        internal readonly float defaultMinServeAngle = 60;
+        internal readonly float defaultMaxServeAngle = 120;
+        internal readonly float defaultMinBounceAngle = 40;
+        internal readonly float defaultMaxBounceAngle = 140;
 
         public SettingsStruct()
         {
@@ -35,15 +34,15 @@ namespace PongProject1
     public class Game1 : Game
     {
         internal SettingsStruct Settings = new ();
-        internal const string ballFileName = "ball";
+        private const string ballFileName = "ball";
         private const string lifeIconFileName = "ball";
-        internal const string player1PaddleFileName = "bluePaddle";
-        internal const string player2PaddleFileName = "redPaddle";
-        internal int screenWidth;
-        internal int screenHeight;
+        private const string player1PaddleFileName = "bluePaddle";
+        private const string player2PaddleFileName = "redPaddle";
+        internal readonly int screenWidth;
+        internal readonly int screenHeight;
         private const string pausedText = "GAME PAUSED";
         
-        private GraphicsDeviceManager graphics;
+        private readonly GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
         public SpriteFont arialFont;
@@ -120,7 +119,7 @@ namespace PongProject1
             Exit();
         }
 
-        protected void QuitGame()
+        private void QuitGame()
         {
             menuOpen = true;
             player1Paddle.Active = false;
