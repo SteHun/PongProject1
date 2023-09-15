@@ -8,7 +8,6 @@ namespace PongProject1
 {
     internal class Ball
     {
-        // test
         private Game1 game;
 
         public bool Active;
