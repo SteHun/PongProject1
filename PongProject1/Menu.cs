@@ -44,10 +44,11 @@ namespace PongProject1
         private bool menuUpHeld; //Used for menu movement
         private bool menuDownHeld; //Used for menu movement
         private bool menuSelectHeld;
+        private bool debugModeHeld;
+        private bool quickStartHeld;
+        private bool pauseHeld;
         
         private string winningPlayer = "";
-        private SpriteBatch localSpriteBatch;
-        private SpriteFont localArialFont;
 
         public Menu(Game1 game)
         {
@@ -70,9 +71,9 @@ namespace PongProject1
             menuDownKey = Keys.S;
             menuSelectKey = Keys.Enter;
             menuQuitKey = Keys.Escape;
-            //
-            //
-            //
+            debugModeKey = Keys.O;
+            quickStartKey = Keys.I;
+            pauseKey = Keys.P;
             player1UpKey = Keys.W;
             player1DownKey = Keys.S;
             player2UpKey = Keys.I;
@@ -85,7 +86,7 @@ namespace PongProject1
             CheckForKeybind();
 
             //TODO Expand and finish other menus
-            //TODO (missing lobby, how to play, and the functionality of everything except moving menus and keybinds)
+            //TODO (missing how to play, and the functionality of music and sound effect toggles (if we are to add those))
 
             if(quitWaitTime > 0) quitWaitTime--;
             if (noInputWaitTime > 0) noInputWaitTime--;
@@ -95,11 +96,8 @@ namespace PongProject1
             }
         }
 
-        public void DrawMenu(SpriteBatch spriteBatch, SpriteFont arialFont)
+        public void DrawMenu()
         {
-            localSpriteBatch = spriteBatch;
-            localArialFont = arialFont;
-            
             switch (menuState)
             {
                 case MenuState.MainMenu:
@@ -111,9 +109,9 @@ namespace PongProject1
                     //The tooltip message if the player doesn't move in the main menu for 15 seconds
                     if (noInputWaitTime == 0)
                     {
-                        spriteBatch.DrawString(arialFont, $"Use {menuUpKey.ToString()} and {menuDownKey.ToString()} to move in the menu ",
+                        game.spriteBatch.DrawString(game.arialFont, $"Use {menuUpKey.ToString()} and {menuDownKey.ToString()} to move in the menu ",
                             new Vector2(50, 350), Color.Gray);
-                        spriteBatch.DrawString(arialFont, $"and {menuSelectKey.ToString()} to select an option",
+                        game.spriteBatch.DrawString(game.arialFont, $"and {menuSelectKey.ToString()} to select an option",
                             new Vector2(50, 385), Color.Gray);
                     }
                     break;
@@ -132,7 +130,7 @@ namespace PongProject1
                     MenuString2ndRow(playerType[player1TypeIndex], 1);
                     MenuString2ndRow(lives[player1LivesIndex].ToString(), 2);
                     MenuString2ndRow(playerType[player2TypeIndex], 3);
-                    MenuString2ndRow(lives[player1LivesIndex].ToString(), 4);
+                    MenuString2ndRow(lives[player2LivesIndex].ToString(), 4);
                     //(Back text here)
                     break;
 
@@ -173,11 +171,11 @@ namespace PongProject1
                     break;
 
                 case MenuState.SelectingKey:
-                    spriteBatch.DrawString(arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), Color.White);
+                    game.spriteBatch.DrawString(game.arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), Color.White);
                     break;
 
                 case MenuState.Winner:
-                    spriteBatch.DrawString(arialFont, $"{winningPlayer} has won!", new Vector2(200, 300), Color.White);
+                    game.spriteBatch.DrawString(game.arialFont, $"{winningPlayer} has won!", new Vector2(200, 300), Color.White);
                     break;
             }
         }
@@ -231,6 +229,12 @@ namespace PongProject1
                 game.ExitGame();
             }
 
+            if (Keyboard.GetState().IsKeyDown(quickStartKey) && !quickStartHeld)
+            {
+                quickStartHeld = true;
+                game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex]);
+            }
+
             //Move to a different menu / some other action when select key is pressed
             if (Keyboard.GetState().IsKeyDown(menuSelectKey) && !menuSelectHeld)
             {
@@ -273,17 +277,20 @@ namespace PongProject1
             {
                 menuUpHeld = false;
             }
-
-            //Same but for other direction
+            
             if (Keyboard.GetState().IsKeyUp(menuDownKey))
             {
                 menuDownHeld = false;
             }
-
-            //Same but for select key
+            
             if (Keyboard.GetState().IsKeyUp(menuSelectKey))
             {
                 menuSelectHeld = false;
+            }
+
+            if (Keyboard.GetState().IsKeyUp(quickStartKey))
+            {
+                quickStartHeld = false;
             }
         }
 
@@ -315,7 +322,7 @@ namespace PongProject1
                     switch (menuIndex)
                     {
                         case (byte)Lobby.Start:
-                            game.StartGame();
+                            game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex]);
                             
                             break;
                         case (byte)Lobby.Player1Player:
@@ -372,9 +379,15 @@ namespace PongProject1
                         case (byte)Controls.QuickQuit:
                             variablePosition = 3;
                             break;
-                        //TODO add debug
-                        //TODO add quick start
-                        //TODO add pause
+                        case (byte)Controls.QuickStartMode:
+                            variablePosition = 4;
+                            break;
+                        case (byte)Controls.DebugMode:
+                            variablePosition = 5;
+                            break;
+                        case (byte)Controls.Pause:
+                            variablePosition = 6;
+                            break;
                         case (byte)Controls.Player1Up:
                             variablePosition = 7;
                             break;
@@ -464,13 +477,13 @@ namespace PongProject1
         //This method is used to more quickly type DrawString(), which has multiple parameters that are constantly the same
         private void MenuString(string text, byte index)
         {
-            localSpriteBatch.DrawString(localArialFont, text, menuTextTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
+            game.spriteBatch.DrawString(game.arialFont, text, menuTextTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
         }
 
         //Same but with the second row vector
         private void MenuString2ndRow(string text, byte index)
         {
-            localSpriteBatch.DrawString(localArialFont, text, menu2ndRowTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
+            game.spriteBatch.DrawString(game.arialFont, text, menu2ndRowTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
         }
 
         #region Menu Enums
