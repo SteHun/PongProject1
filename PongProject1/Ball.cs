@@ -29,10 +29,10 @@ namespace PongProject1
         {
             this.game = game;
             //convert to radians
-            this.minServeAngle = Game1.defaultMinServeAngle * (MathF.PI / 180);
-            this.maxServeAngle = Game1.defaultMaxServeAngle * (MathF.PI / 180);
-            this.minBounceAngle = Game1.defaultMinBounceAngle * (MathF.PI / 180);
-            this.maxBounceAngle = Game1.defaultMaxBounceAngle * (MathF.PI/ 180);
+            this.minServeAngle = game.Settings.defaultMinServeAngle * (MathF.PI / 180);
+            this.maxServeAngle = game.Settings.defaultMaxServeAngle * (MathF.PI / 180);
+            this.minBounceAngle = game.Settings.defaultMinBounceAngle * (MathF.PI / 180);
+            this.maxBounceAngle = game.Settings.defaultMaxBounceAngle * (MathF.PI/ 180);
         }
 
         internal Ball(Game1 game, Vector2 startPos)
@@ -40,10 +40,10 @@ namespace PongProject1
             this.game = game;
             startingPosition = startPos;
             //convert to radians
-            this.minServeAngle = Game1.defaultMinServeAngle * (MathF.PI / 180);
-            this.maxServeAngle = Game1.defaultMaxServeAngle * (MathF.PI / 180);
-            this.minBounceAngle = Game1.defaultMinBounceAngle * (MathF.PI / 180);
-            this.maxBounceAngle = Game1.defaultMaxBounceAngle * (MathF.PI/ 180);
+            this.minServeAngle = game.Settings.defaultMinServeAngle * (MathF.PI / 180);
+            this.maxServeAngle = game.Settings.defaultMaxServeAngle * (MathF.PI / 180);
+            this.minBounceAngle = game.Settings.defaultMinBounceAngle * (MathF.PI / 180);
+            this.maxBounceAngle = game.Settings.defaultMaxBounceAngle * (MathF.PI/ 180);
         }
 
 
@@ -86,7 +86,7 @@ namespace PongProject1
                 angle = MapValue(minBounceAngle, maxBounceAngle, (float)collisionResult);
             else
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
-            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (Game1.defaultStartingVelocity + totalBounces * Game1.defaultVelocityIncrement);
+            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
@@ -116,7 +116,7 @@ namespace PongProject1
             {
                 angle = (float)rng.NextDouble() * (maxServeAngle - minServeAngle) + minServeAngle + MathF.PI;
             }
-            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * Game1.defaultStartingVelocity;
+            Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * game.Settings.defaultStartingVelocity;
         }
 
         // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no collision

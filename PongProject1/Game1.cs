@@ -4,20 +4,37 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PongProject1
 {
+    
+    internal struct SettingsStruct
+    {
+        internal Keys player1DownKey = Keys.S;
+        internal Keys player1UpKey = Keys.W;
+        internal Keys player2DownKey = Keys.Down;
+        internal Keys player2UpKey = Keys.Up;
+        internal Keys pauseKey = Keys.Escape;
+        internal Keys confirmKey = Keys.Enter;
+
+        internal int defaultPaddleHeight = 100;
+        internal int defaultPaddleSpeed = 300;
+        internal int defaultPaddleDistanceFromEdge = 40;
+        internal int defaultMaxLives = 3;
+
+        internal float defaultStartingVelocity = 200;
+        internal float defaultVelocityIncrement = 10;
+        internal float defaultMinServeAngle = 60;
+        internal float defaultMaxServeAngle = 120;
+        internal float defaultMinBounceAngle = 40;
+        internal float defaultMaxBounceAngle = 140;
+
+        public SettingsStruct()
+        {
+            
+        }
+    }
+    
     public class Game1 : Game
     {
-        internal const int defaultPaddleHeight = 100;
-        internal const int defaultPaddleSpeed = 300;
-        internal const int defaultPaddleDistanceFromEdge = 40;
-        internal const int defaultMaxLives = 3;
-
-        internal const float defaultStartingVelocity = 200;
-        internal const float defaultVelocityIncrement = 10;
-        internal const float defaultMinServeAngle = 60;
-        internal const float defaultMaxServeAngle = 120;
-        internal const float defaultMinBounceAngle = 40;
-        internal const float defaultMaxBounceAngle = 140;
-
+        internal SettingsStruct Settings = new SettingsStruct();
         internal const string ballFileName = "ball";
         private const string lifeIconFileName = "ball";
         internal const string player1PaddleFileName = "bluePaddle";
@@ -30,26 +47,7 @@ namespace PongProject1
         private Texture2D lifeIcon;
         private SpriteFont arialFont;
         // declares struct and sets default values
-        internal struct Settings
-        {
-            internal Keys player1DownKey = Keys.S;
-            internal Keys player1UpKey = Keys.W;
-            internal Keys player2DownKey = Keys.Down;
-            internal Keys player2UpKey = Keys.Up;
-            internal Keys pauseKey = Keys.Escape;
-            internal Keys confirmKey = Keys.Enter;
-
-            public Settings()
-            {
-            }
-        }
-
-        internal Keys player1DownKey = Keys.S;
-        internal Keys player1UpKey = Keys.W;
-        internal Keys player2DownKey = Keys.Down;
-        internal Keys player2UpKey = Keys.Up;
-        internal Keys pauseKey = Keys.Escape;
-        internal Keys confirmKey = Keys.Enter;
+        
 
         private Menu menu;
         private Ball ball;
@@ -81,8 +79,8 @@ namespace PongProject1
             // 
             
             ball = new Ball(this);
-            player1Paddle = new Paddle(this, player1UpKey, player1DownKey, true);
-            player2Paddle = new Paddle(this, player2UpKey, player2DownKey, false);
+            player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true);
+            player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false);
 
             menu.InitializeMenu();
             
@@ -105,8 +103,8 @@ namespace PongProject1
         internal void StartGame()
         {
             menuOpen = false;
-            player1Lives = defaultMaxLives;
-            player2Lives = defaultMaxLives;
+            player1Lives = Settings.defaultMaxLives;
+            player2Lives = Settings.defaultMaxLives;
             player1Paddle.Active = true;
             player1Paddle.Visible = true;
             player2Paddle.Active = true;
