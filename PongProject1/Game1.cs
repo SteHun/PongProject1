@@ -175,7 +175,7 @@ namespace PongProject1
                     player2Lives--;
                     if (player2Lives <= 0)
                     {
-                        // Code for handeling game over. Place a proper game over screen (as part of some method) here
+                        menu.GameOver("Player 1");
                         QuitGame();
                         base.Update(gameTime);
                         return;
@@ -186,7 +186,7 @@ namespace PongProject1
                     player1Lives--;
                     if (player1Lives <= 0)
                     {
-                        // Code for handeling game over. Place a proper game over screen (as part of some method) here
+                        menu.GameOver("Player 2");
                         QuitGame();
                         base.Update(gameTime);
                         return;

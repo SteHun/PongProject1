@@ -44,6 +44,10 @@ namespace PongProject1
         private bool menuUpHeld; //Used for menu movement
         private bool menuDownHeld; //Used for menu movement
         private bool menuSelectHeld;
+        
+        private string winningPlayer = "";
+        private SpriteBatch localSpriteBatch;
+        private SpriteFont localArialFont;
 
         public Menu(Game1 game)
         {
@@ -93,16 +97,16 @@ namespace PongProject1
 
         public void DrawMenu(SpriteBatch spriteBatch, SpriteFont arialFont)
         {
+            localSpriteBatch = spriteBatch;
+            localArialFont = arialFont;
+            
             switch (menuState)
             {
                 case MenuState.MainMenu:
-                    spriteBatch.DrawString(arialFont, "Start", menuTextTopLeftPosition, MenuEntryColor(0));
-                    spriteBatch.DrawString(arialFont, "Settings", menuTextTopLeftPosition + menuTextGap,
-                        MenuEntryColor(1));
-                    spriteBatch.DrawString(arialFont, "How to play", menuTextTopLeftPosition + menuTextGap * 2,
-                        MenuEntryColor(2));
-                    spriteBatch.DrawString(arialFont, "Quit", menuTextTopLeftPosition + menuTextGap * 3,
-                        MenuEntryColor(3));
+                    MenuString("Start", 0);
+                    MenuString("Settings", 1);
+                    MenuString("Hot to play", 2);
+                    MenuString("Quit", 3);
 
                     //The tooltip message if the player doesn't move in the main menu for 15 seconds
                     if (noInputWaitTime == 0)
@@ -116,58 +120,64 @@ namespace PongProject1
 
                 case MenuState.Lobby:
                     //First row (What rules/handicap you are selecting)
-                    spriteBatch.DrawString(arialFont, "Start", menuTextTopLeftPosition, MenuEntryColor(0));
-                    spriteBatch.DrawString(arialFont, "Player 1", menuTextTopLeftPosition + menuTextGap, MenuEntryColor(1));
-                    spriteBatch.DrawString(arialFont, "Lives", menuTextTopLeftPosition + menuTextGap*2, MenuEntryColor(2));
-                    spriteBatch.DrawString(arialFont, "Player 2", menuTextTopLeftPosition + menuTextGap*3, MenuEntryColor(3));
-                    spriteBatch.DrawString(arialFont, "Lives", menuTextTopLeftPosition + menuTextGap*4, MenuEntryColor(4));
+                    MenuString("Start", 0);
+                    MenuString("Player 1", 1);
+                    MenuString("Lives", 2);
+                    MenuString("Player 2", 3);
+                    MenuString("Lives", 4);
+                    MenuString("Back", 5);
                     
                     //Second row (The value of the rule/setting)
                     //(Start text here)
-                    spriteBatch.DrawString(arialFont, playerType[player1TypeIndex], menu2ndRowTopLeftPosition + menuTextGap, Color.White);
-                    spriteBatch.DrawString(arialFont, lives[player1LivesIndex].ToString(), menu2ndRowTopLeftPosition + menuTextGap*2, Color.White);
-                    spriteBatch.DrawString(arialFont, playerType[player2TypeIndex], menu2ndRowTopLeftPosition + menuTextGap*3, Color.White);
-                    spriteBatch.DrawString(arialFont, lives[player2LivesIndex].ToString(), menu2ndRowTopLeftPosition + menuTextGap*4, Color.White);
+                    MenuString2ndRow(playerType[player1TypeIndex], 1);
+                    MenuString2ndRow(lives[player1LivesIndex].ToString(), 2);
+                    MenuString2ndRow(playerType[player2TypeIndex], 3);
+                    MenuString2ndRow(lives[player1LivesIndex].ToString(), 4);
+                    //(Back text here)
                     break;
 
                 case MenuState.Settings:
-                    spriteBatch.DrawString(arialFont, "Controls", menuTextTopLeftPosition, MenuEntryColor(0));
-                    spriteBatch.DrawString(arialFont, "Music", menuTextTopLeftPosition + menuTextGap, MenuEntryColor(1));
-                    spriteBatch.DrawString(arialFont, "Sound effects", menuTextTopLeftPosition + menuTextGap*2, MenuEntryColor(2));
-                    spriteBatch.DrawString(arialFont, "Back", menuTextTopLeftPosition + menuTextGap*3, MenuEntryColor(3));
+                    MenuString("Controls", 0);
+                    MenuString("Music", 1);
+                    MenuString("Sound effects", 2);
+                    MenuString("Back", 3);
                     break;
 
                 case MenuState.Controls:
                     //First row (what the keybinds do)
-                    spriteBatch.DrawString(arialFont, "Menu move up", menuTextTopLeftPosition, MenuEntryColor(0));
-                    spriteBatch.DrawString(arialFont, "Menu move down", menuTextTopLeftPosition + menuTextGap, MenuEntryColor(1));
-                    spriteBatch.DrawString(arialFont, "Menu select", menuTextTopLeftPosition + menuTextGap*2, MenuEntryColor(2));
-                    spriteBatch.DrawString(arialFont, "Quit exit", menuTextTopLeftPosition + menuTextGap*3, MenuEntryColor(3));
-                    spriteBatch.DrawString(arialFont, "Enter debug mode", menuTextTopLeftPosition + menuTextGap*4, MenuEntryColor(4));
-                    spriteBatch.DrawString(arialFont, "Quick start match", menuTextTopLeftPosition + menuTextGap*5, MenuEntryColor(5));
-                    spriteBatch.DrawString(arialFont, "Pause", menuTextTopLeftPosition + menuTextGap*6, MenuEntryColor(6));
-                    spriteBatch.DrawString(arialFont, "Player 1 up", menuTextTopLeftPosition + menuTextGap*7, MenuEntryColor(7));
-                    spriteBatch.DrawString(arialFont, "Player 1 down", menuTextTopLeftPosition + menuTextGap*8, MenuEntryColor(8));
-                    spriteBatch.DrawString(arialFont, "Player 2 up", menuTextTopLeftPosition + menuTextGap*9, MenuEntryColor(9));
-                    spriteBatch.DrawString(arialFont, "Player 2 down", menuTextTopLeftPosition + menuTextGap*10, MenuEntryColor(10));
-                    spriteBatch.DrawString(arialFont, "Back", menuTextTopLeftPosition + menuTextGap*11, MenuEntryColor(11));
-
+                    MenuString("Menu move up", 0);
+                    MenuString("Menu move down", 1);
+                    MenuString("Menu select", 2);
+                    MenuString("Quick exit", 3);
+                    MenuString("Enter debug mode", 4);
+                    MenuString("Quick start mode", 5);
+                    MenuString("Pause", 6);
+                    MenuString("Player 1 up", 7);
+                    MenuString("Player 1 down", 8);
+                    MenuString("Player 2 up", 9);
+                    MenuString("Player 2 down", 10);
+                    MenuString("Back", 11);
+                    
                     //Second row (what the keybinds are)
-                    spriteBatch.DrawString(arialFont, menuUpKey.ToString(), menu2ndRowTopLeftPosition, Color.White);
-                    spriteBatch.DrawString(arialFont, menuDownKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap, Color.White);
-                    spriteBatch.DrawString(arialFont, menuSelectKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*2, Color.White);
-                    spriteBatch.DrawString(arialFont, menuQuitKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*3, Color.White);
-                    spriteBatch.DrawString(arialFont, debugModeKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*4, Color.White);
-                    spriteBatch.DrawString(arialFont, quickStartKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*5, Color.White);
-                    spriteBatch.DrawString(arialFont, pauseKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*6, Color.White);
-                    spriteBatch.DrawString(arialFont, player1UpKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*7, Color.White);
-                    spriteBatch.DrawString(arialFont, player1DownKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*8, Color.White);
-                    spriteBatch.DrawString(arialFont, player2UpKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*9, Color.White);
-                    spriteBatch.DrawString(arialFont, player2DownKey.ToString(), menu2ndRowTopLeftPosition + menuTextGap*10, Color.White);
+                    MenuString2ndRow(menuUpKey.ToString(), 0);
+                    MenuString2ndRow(menuDownKey.ToString(), 1);
+                    MenuString2ndRow(menuSelectKey.ToString(), 2);
+                    MenuString2ndRow(menuQuitKey.ToString(), 3);
+                    MenuString2ndRow(debugModeKey.ToString(), 4);
+                    MenuString2ndRow(quickStartKey.ToString(), 5);
+                    MenuString2ndRow(pauseKey.ToString(), 6);
+                    MenuString2ndRow(player1UpKey.ToString(), 7);
+                    MenuString2ndRow(player1DownKey.ToString(), 8);
+                    MenuString2ndRow(player2UpKey.ToString(), 9);
+                    MenuString2ndRow(player2DownKey.ToString(), 10);
                     break;
 
                 case MenuState.SelectingKey:
                     spriteBatch.DrawString(arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), Color.White);
+                    break;
+
+                case MenuState.Winner:
+                    spriteBatch.DrawString(arialFont, $"{winningPlayer} has won!", new Vector2(200, 300), Color.White);
                     break;
             }
         }
@@ -320,6 +330,10 @@ namespace PongProject1
                         case (byte)Lobby.Player2Lives:
                             player2LivesIndex = (byte)ToggleNext(lives, player2LivesIndex);
                             break;
+                        case (byte)Lobby.Back:
+                            menuState = MenuState.MainMenu;
+                            menuIndex = 0;
+                            break;
                     }
                     break;
 
@@ -341,7 +355,6 @@ namespace PongProject1
                             menuIndex = 0;
                             break;
                     }
-
                     break;
 
                 case MenuState.Controls:
@@ -381,6 +394,11 @@ namespace PongProject1
                     }
                     
                     menuState = MenuState.SelectingKey;
+                    break;
+
+                case MenuState.Winner:
+                    menuState = MenuState.MainMenu;
+                    menuIndex = 0;
                     break;
             }
         }
@@ -436,6 +454,25 @@ namespace PongProject1
             return index + 1;
         }
 
+        public void GameOver(string winner)
+        {
+            menuState = MenuState.Winner;
+            menuIndex = 0;
+            winningPlayer = winner;
+        }
+
+        //This method is used to more quickly type DrawString(), which has multiple parameters that are constantly the same
+        private void MenuString(string text, byte index)
+        {
+            localSpriteBatch.DrawString(localArialFont, text, menuTextTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
+        }
+
+        //Same but with the second row vector
+        private void MenuString2ndRow(string text, byte index)
+        {
+            localSpriteBatch.DrawString(localArialFont, text, menu2ndRowTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
+        }
+
         #region Menu Enums
 
         enum MenuState : byte //What menu is currently selected
@@ -446,6 +483,7 @@ namespace PongProject1
             HowToPlay,
             Controls,
             SelectingKey,
+            Winner,
         }
 
         enum MainMenu : byte //All selectable options within MainMenu
