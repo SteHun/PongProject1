@@ -8,6 +8,7 @@ namespace PongProject1
 {
     internal class Paddle
     {
+        internal int type;
         internal Vector2 Position;
         internal bool Active = false;
         internal bool Visible = false;
@@ -21,8 +22,9 @@ namespace PongProject1
         private Vector2 startingPosition;
         private Keys upKey;
         private Keys downKey;
-        internal Paddle(Vector2 startingPosition, int height, int screenHeight, Keys upKey, Keys downKey, float speed, bool isFacingRight)
+        internal Paddle(Vector2 startingPosition, int height, int screenHeight, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType)
         {
+            type = playerType;
             this.startingPosition = startingPosition;
             this.height = height;
             this.screenHeight = screenHeight;
@@ -33,8 +35,9 @@ namespace PongProject1
             IsFacingRight = isFacingRight;
         }
         
-        internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight)
+        internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
         {
+            type = playerType;
             this.height = game.Settings.defaultPaddleHeight;
             this.screenHeight = game.screenHeight;
             this.upKey = upKey;
@@ -75,6 +78,28 @@ namespace PongProject1
         {
             if (!Active)
                 return;
+            float totalMovement;
+            switch (type)
+            {
+                case 0: //human
+                    totalMovement = HumanUpdate(gameTime);
+                    break;
+                case 1: //easy AI
+                    totalMovement = EasyAIUpdate(gameTime);
+                    break;
+                default: //hard AI or some other problem
+                    totalMovement = HardAIUpdate(gameTime);
+                    break;
+            }
+            Position.Y += totalMovement;
+            if (Position.Y < 0)
+                Position.Y = 0;
+            else if (Position.Y + height > screenHeight)
+                Position.Y = screenHeight - height;
+        }
+
+        private float HumanUpdate(GameTime gameTime)
+        {
             float totalMovement = 0;
             KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(upKey))
@@ -85,11 +110,20 @@ namespace PongProject1
             {
                 totalMovement += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-            Position.Y += totalMovement;
-            if (Position.Y < 0)
-                Position.Y = 0;
-            else if (Position.Y + height > screenHeight)
-                Position.Y = screenHeight - height;
+
+            return totalMovement;
+        }
+
+        internal float EasyAIUpdate(GameTime gameTime)
+        {
+            // TODO make easy AI
+            return 0;
+        }
+        
+        internal float HardAIUpdate(GameTime gameTime)
+        {
+            // TODO make hard AI
+            return 0;
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)

@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PongProject1
 {
-    
+    internal enum PlayerMode {}
     internal struct SettingsStruct
     {
         internal Keys menuDownKey = Keys.Down;
@@ -58,7 +58,7 @@ namespace PongProject1
         private Paddle player2Paddle;
         private int player1Lives;
         private int player2Lives;
-
+        
         private bool menuOpen = true;
         private bool gamePaused;
         private bool pauseKeyPressedLastFrame;
@@ -97,10 +97,11 @@ namespace PongProject1
             base.LoadContent();
         }
 
-        internal void StartGame(int livesPlayer1, int livesPlayer2)
+        internal void StartGame(int livesPlayer1, int livesPlayer2, int typePlayer1, int typePlayer2)
         {
-            player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true);
-            player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false);
+            
+            player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true, typePlayer1);
+            player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false, typePlayer2);
             player1Paddle.Load(Content, player1PaddleFileName);
             player2Paddle.Load(Content, player2PaddleFileName);
             ball = new Ball(this);

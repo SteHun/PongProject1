@@ -219,7 +219,7 @@ namespace PongProject1
             if (Keyboard.GetState().IsKeyDown(quickStartKey) && !quickStartHeld)
             {
                 quickStartHeld = true;
-                game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex]);
+                game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex], player1TypeIndex, player2TypeIndex);
             }
 
             //Move to a different menu / some other action when select key is pressed
@@ -305,7 +305,7 @@ namespace PongProject1
                     switch (menuIndex)
                     {
                         case (byte)Lobby.Start:
-                            game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex]);
+                            game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex], player1TypeIndex, player2TypeIndex);
                             
                             break;
                         case (byte)Lobby.Player1Player:
