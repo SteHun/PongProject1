@@ -35,24 +35,24 @@ namespace PongProject1
         
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight)
         {
-            this.height = Game1.defaultPaddleHeight;
+            this.height = game.Settings.defaultPaddleHeight;
             this.screenHeight = game.screenHeight;
             this.upKey = upKey;
             this.downKey = downKey;
-            Speed = Game1.defaultPaddleSpeed;
+            Speed = game.Settings.defaultPaddleSpeed;
             Position = startingPosition;
             IsFacingRight = isFacingRight;
             if (isFacingRight)
             {
                 this.startingPosition = new Vector2(
-                    Game1.defaultPaddleDistanceFromEdge, 
-                    (float)(game.screenHeight - Game1.defaultPaddleHeight) / 2);
+                    game.Settings.defaultPaddleDistanceFromEdge, 
+                    (float)(game.screenHeight - game.Settings.defaultPaddleHeight) / 2);
             }
             else
             {
                 this.startingPosition = new Vector2(
-                    game.screenWidth - Game1.defaultPaddleDistanceFromEdge, 
-                    (float)(game.screenHeight - Game1.defaultPaddleHeight) / 2);
+                    game.screenWidth - game.Settings.defaultPaddleDistanceFromEdge, 
+                    (float)(game.screenHeight - game.Settings.defaultPaddleHeight) / 2);
             }
             
         }
