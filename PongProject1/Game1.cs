@@ -11,8 +11,9 @@ namespace PongProject1
         internal Keys player1UpKey = Keys.W;
         internal Keys player2DownKey = Keys.Down;
         internal Keys player2UpKey = Keys.Up;
-        internal Keys pauseKey = Keys.Escape;
+        internal Keys pauseKey = Keys.P;
         internal Keys confirmKey = Keys.Enter;
+        internal Keys quitKey = Keys.Escape;
 
         internal int defaultPaddleHeight = 100;
         internal int defaultPaddleSpeed = 300;
@@ -78,11 +79,7 @@ namespace PongProject1
             // required vars: 
             // screen width / height
             // settings
-            // 
-            
-            ball = new Ball(this);
-            player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true);
-            player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false);
+            //
 
             menu.InitializeMenu();
             
@@ -92,11 +89,7 @@ namespace PongProject1
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
-
-            player1Paddle.Load(Content, player1PaddleFileName);
-            player2Paddle.Load(Content, player2PaddleFileName);
+            
             lifeIcon = Content.Load<Texture2D>(lifeIconFileName);
             arialFont = Content.Load<SpriteFont>("arialFont");
             base.LoadContent();
@@ -104,6 +97,13 @@ namespace PongProject1
 
         internal void StartGame(int livesPlayer1, int livesPlayer2)
         {
+            player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true);
+            player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false);
+            player1Paddle.Load(Content, player1PaddleFileName);
+            player2Paddle.Load(Content, player2PaddleFileName);
+            ball = new Ball(this);
+            ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
+            
             menuOpen = false;
             player1Lives = livesPlayer1;
             player2Lives = livesPlayer2;
@@ -138,6 +138,11 @@ namespace PongProject1
                 menu.UpdateMenu();
                 base.Update(gameTime);
                 return;
+            }
+            
+            if (Keyboard.GetState().IsKeyDown(Settings.quitKey))
+            {
+                ExitGame();
             }
 
             if (Keyboard.GetState().IsKeyDown(Settings.pauseKey) && !pauseKeyPressedLastFrame)
@@ -207,13 +212,13 @@ namespace PongProject1
             spriteBatch.Begin();
             if (menuOpen)
                 menu.DrawMenu();
-            
-            ball.Draw(gameTime, spriteBatch);
-            player1Paddle.Draw(gameTime, spriteBatch);
-            player2Paddle.Draw(gameTime, spriteBatch);
 
             if (!menuOpen)
             {
+                ball.Draw(gameTime, spriteBatch);
+                player1Paddle.Draw(gameTime, spriteBatch);
+                player2Paddle.Draw(gameTime, spriteBatch);
+                
                 // Draw lives of player 1
                 for (int i = 0; i < player1Lives; i++)
                 {
@@ -224,12 +229,6 @@ namespace PongProject1
                 {
                     spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
                 }
-            }
-            spriteBatch.End();
-            // Draw lives of player 2
-            for (int i = 0; i < player2Lives; i++)
-            {
-                spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
             }
 
             if (gamePaused)

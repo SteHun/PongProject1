@@ -20,8 +20,8 @@ namespace PongProject1
         private byte quitWaitTime; //A delay before the quit button can be pressed in frames 
 
         //Menu toggle lists
-        private string[] playerType = {"Human", "AI Easy", "AI Hard"};
-        private int[] lives = { 1, 2, 3, 4, 5 };
+        private readonly string[] playerType = {"Human", "AI Easy", "AI Hard"};
+        private readonly int[] lives = { 1, 2, 3, 4, 5 };
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex;
         private byte player2TypeIndex;
@@ -32,14 +32,8 @@ namespace PongProject1
         private Keys menuUpKey;
         private Keys menuDownKey;
         private Keys menuSelectKey;
-        private Keys menuQuitKey;
         private Keys debugModeKey;
         private Keys quickStartKey;
-        private Keys pauseKey;
-        private Keys player1UpKey;
-        private Keys player1DownKey;
-        private Keys player2UpKey;
-        private Keys player2DownKey;
 
         private bool menuUpHeld; //Used for menu movement
         private bool menuDownHeld; //Used for menu movement
@@ -70,14 +64,8 @@ namespace PongProject1
             menuUpKey = Keys.W;
             menuDownKey = Keys.S;
             menuSelectKey = Keys.Enter;
-            menuQuitKey = Keys.Escape;
-            debugModeKey = Keys.O;
-            quickStartKey = Keys.I;
-            pauseKey = Keys.P;
-            player1UpKey = Keys.W;
-            player1DownKey = Keys.S;
-            player2UpKey = Keys.I;
-            player2DownKey = Keys.K;
+            debugModeKey = Keys.F1;
+            quickStartKey = Keys.F2;
         }
         
         public void UpdateMenu()
@@ -160,14 +148,14 @@ namespace PongProject1
                     MenuString2ndRow(menuUpKey.ToString(), 0);
                     MenuString2ndRow(menuDownKey.ToString(), 1);
                     MenuString2ndRow(menuSelectKey.ToString(), 2);
-                    MenuString2ndRow(menuQuitKey.ToString(), 3);
+                    MenuString2ndRow(game.Settings.quitKey.ToString(), 3);
                     MenuString2ndRow(debugModeKey.ToString(), 4);
                     MenuString2ndRow(quickStartKey.ToString(), 5);
-                    MenuString2ndRow(pauseKey.ToString(), 6);
-                    MenuString2ndRow(player1UpKey.ToString(), 7);
-                    MenuString2ndRow(player1DownKey.ToString(), 8);
-                    MenuString2ndRow(player2UpKey.ToString(), 9);
-                    MenuString2ndRow(player2DownKey.ToString(), 10);
+                    MenuString2ndRow(game.Settings.pauseKey.ToString(), 6);
+                    MenuString2ndRow(game.Settings.player1UpKey.ToString(), 7);
+                    MenuString2ndRow(game.Settings.player1DownKey.ToString(), 8);
+                    MenuString2ndRow(game.Settings.player2UpKey.ToString(), 9);
+                    MenuString2ndRow(game.Settings.player2DownKey.ToString(), 10);
                     break;
 
                 case MenuState.SelectingKey:
@@ -224,7 +212,7 @@ namespace PongProject1
             }
 
             //Quick quit key
-            if (Keyboard.GetState().IsKeyDown(menuQuitKey) && quitWaitTime == 0 && menuState != MenuState.SelectingKey)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.quitKey) && quitWaitTime == 0 && menuState != MenuState.SelectingKey)
             {
                 game.ExitGame();
             }
@@ -438,8 +426,29 @@ namespace PongProject1
                     menuSelectKey = pressedKeys[0];
                     break;
                 case 3:
-                    menuQuitKey = pressedKeys[0];
+                    game.Settings.quitKey = pressedKeys[0];
                     quitWaitTime = 30;
+                    break;
+                case 4:
+                    debugModeKey = pressedKeys[0];
+                    break;
+                case 5:
+                    quickStartKey = pressedKeys[0];
+                    break;
+                case 6:
+                    game.Settings.pauseKey = pressedKeys[0];
+                    break;
+                case 7:
+                    game.Settings.player1UpKey = pressedKeys[0];
+                    break;
+                case 8:
+                    game.Settings.player1DownKey = pressedKeys[0];
+                    break;
+                case 9:
+                    game.Settings.player2UpKey = pressedKeys[0];
+                    break;
+                case 10:
+                    game.Settings.player2DownKey = pressedKeys[0];
                     break;
             }
 
