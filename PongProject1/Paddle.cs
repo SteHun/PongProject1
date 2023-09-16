@@ -18,6 +18,7 @@ namespace PongProject1
         internal int height;
         internal int width;
         internal bool IsFacingRight;
+        internal float AIerror;
 
         private Ball ball;
         private int screenHeight;
@@ -26,7 +27,8 @@ namespace PongProject1
         private Vector2 startingPosition;
         private Keys upKey;
         private Keys downKey;
-        internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball)
+        private SettingsStruct Settings;
+        internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball, SettingsStruct settings)
         {
             this.ball = ball;
             type = playerType;
@@ -39,6 +41,7 @@ namespace PongProject1
             Speed = speed;
             Position = startingPosition;
             IsFacingRight = isFacingRight;
+            Settings = settings;
         }
         
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
@@ -53,6 +56,7 @@ namespace PongProject1
             Speed = game.Settings.defaultPaddleSpeed;
             Position = startingPosition;
             IsFacingRight = isFacingRight;
+            Settings = game.Settings;
             if (isFacingRight)
             {
                 this.startingPosition = new Vector2(
@@ -124,8 +128,18 @@ namespace PongProject1
 
         internal float EasyAIUpdate(GameTime gameTime)
         {
-            // TODO make easy AI
-            return 0;
+            if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
+            {
+                setNewAIerror(0.02f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
+                return 0;
+            }
+
+            float targetPosition = ball.Position.Y - (float)height / 2 + AIerror;
+            if (Position.Y > targetPosition)
+            {
+                return -MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
+            }
+            return MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, targetPosition - Position.Y);
         }
         
         internal float HardAIUpdate(GameTime gameTime)
@@ -175,6 +189,13 @@ namespace PongProject1
             }
             Debug.WriteLine(fakeBall.Position.Y);
             return fakeBall.Position.Y;
+        }
+
+        private void setNewAIerror(float errorMargin)
+        {
+            Random rng = new Random();
+            // set rng between a range of -0.5 * height - errorMargin and 0.5 * height + errorMargin
+            AIerror = ((float)rng.NextDouble() - 0.5f) * (height + errorMargin);
         }
 
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
