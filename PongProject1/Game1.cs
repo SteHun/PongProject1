@@ -28,6 +28,7 @@ namespace PongProject1
         internal readonly float defaultMaxServeAngle = 120;
         internal readonly float defaultMinBounceAngle = 40;
         internal readonly float defaultMaxBounceAngle = 140;
+        internal readonly double defaultBallRespawnTime = 3000;
 
         public SettingsStruct()
         {
@@ -203,7 +204,7 @@ namespace PongProject1
 
 
                 // Code for handling resetting the field (a timeout???) here
-                ball.Respawn();
+                ball.Respawn(gameTime);
             }
 
             base.Update(gameTime);

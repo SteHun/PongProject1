@@ -16,6 +16,7 @@ namespace PongProject1
         public byte ScoringPlayer;
         private Vector2 startingPosition;
         internal Vector2 Position;
+        private double activationTime;
         internal Vector2 Velocity;
         internal Texture2D Texture;
         private float minServeAngle;
@@ -57,7 +58,7 @@ namespace PongProject1
 
         internal void Update(GameTime gameTime)
         {
-            if (!Active)
+            if (!Active || gameTime.TotalGameTime.TotalMilliseconds < activationTime)
             {
                 return;
             }
@@ -117,7 +118,13 @@ namespace PongProject1
 
         internal void Respawn()
         {
+            Respawn(new GameTime(new TimeSpan(0), new TimeSpan(0)));
+        }
+        internal void Respawn(GameTime gameTime)
+        {
             Random rng = new Random();
+            if (gameTime.TotalGameTime.TotalMilliseconds > 0)
+                activationTime = gameTime.TotalGameTime.TotalMilliseconds + game.Settings.defaultBallRespawnTime;
             Position = startingPosition;
             Active = true;
             Visible = true;
@@ -136,6 +143,7 @@ namespace PongProject1
                 angle = (float)rng.NextDouble() * (maxServeAngle - minServeAngle) + minServeAngle + MathF.PI;
             }
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * game.Settings.defaultStartingVelocity;
+            
         }
 
         // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no collision
