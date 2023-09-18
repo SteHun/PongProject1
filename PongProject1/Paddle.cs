@@ -99,8 +99,15 @@ namespace PongProject1
                 case 1: //easy AI
                     totalMovement = EasyAIUpdate(gameTime);
                     break;
-                default: //hard AI or some other problem
+                case 2: //hard AI
                     totalMovement = HardAIUpdate(gameTime);
+                    break;
+                case 3: //Impossible AI
+                    totalMovement = ImpossibleAIUpdate(gameTime);
+                    break;
+                default: //Defaults to being controlled by human if error occures
+                    Console.WriteLine($"{type} is not a recognised AI difficulty");
+                    totalMovement = HumanUpdate(gameTime);
                     break;
             }
             Position.Y += totalMovement;
@@ -126,8 +133,10 @@ namespace PongProject1
             return totalMovement;
         }
 
+        //The AI when easy mode is selected
         internal float EasyAIUpdate(GameTime gameTime)
         {
+            // if the ball is facing the AI it moves to it with an error margin
             if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
             {
                 setNewAIerror(0.02f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
@@ -135,6 +144,10 @@ namespace PongProject1
             }
 
             float targetPosition = ball.Position.Y - (float)height / 2 + AIerror;
+            
+            //If the ball is going away from the AI it does nothing
+            
+            //Turn the targetPosition into a movement
             if (Position.Y > targetPosition)
             {
                 return -MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
@@ -142,7 +155,31 @@ namespace PongProject1
             return MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, targetPosition - Position.Y);
         }
         
+        //The AI when hard mode is selected TODO make AI more beatable and less rigid (hard specific)
         internal float HardAIUpdate(GameTime gameTime)
+        {
+            float totalMovement = 0;
+            float targetPosition = screenHeight/2;
+            // if the ball is facing the AI it moves to it
+            if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
+            {
+                targetPosition = getPredictedBallPosition(gameTime) - ((float)height / 2);
+            }
+            //If the ball is going away from the AI it does nothing
+            
+            //Turn the targetPosition into a movement
+            if (Position.Y > targetPosition)
+            {
+                totalMovement -= MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
+            }
+            else if (Position.Y < targetPosition)
+            {
+                totalMovement += MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, targetPosition - Position.Y);
+            }
+            return totalMovement;
+        }
+        
+        internal float ImpossibleAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
             float targetPosition;

@@ -20,7 +20,7 @@ namespace PongProject1
         private byte quitWaitTime; //A delay before the quit button can be pressed in frames 
 
         //Menu toggle lists
-        private readonly string[] playerType = {"Human", "AI Easy", "AI Hard"};
+        private readonly string[] playerType = {"Human", "AI Easy", "AI Hard", "AI Impossible"};
         private readonly int[] lives = { 1, 2, 3, 4, 5 };
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex = 2;
