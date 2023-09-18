@@ -4,9 +4,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PongProject1
 {
-    internal enum PlayerMode {}
+    internal enum PlayerMode {} //Can be removed?
     internal struct SettingsStruct
     {
+        //Keybinds
         internal Keys menuDownKey = Keys.Down;
         internal Keys menuUpKey = Keys.Up;
         internal Keys debugModeKey = Keys.Insert;
@@ -18,10 +19,12 @@ namespace PongProject1
         internal Keys quitKey = Keys.Escape;
         internal Keys quickStartKey = Keys.Home;
 
+        //Paddle related variables
         internal readonly int defaultPaddleHeight = 100;
         internal readonly int defaultPaddleSpeed = 300;
         internal readonly int defaultPaddleDistanceFromEdge = 40;
 
+        //Ball related variables
         internal readonly float defaultStartingVelocity = 240;
         internal readonly float defaultVelocityIncrement = 30;
         internal readonly float defaultMinServeAngle = 60;
@@ -38,6 +41,7 @@ namespace PongProject1
     
     public class Game1 : Game
     {
+        //Initialization of files and application
         internal SettingsStruct Settings = new ();
         private const string ballFileName = "ball";
         private const string lifeIconFileName = "ball";
@@ -52,7 +56,10 @@ namespace PongProject1
         private Texture2D lifeIcon;
         public SpriteFont arialFont;
         // declares struct and sets default values
+        //^
+        //Where?
 
+        //Game settings and values
         private Menu menu;
         internal Ball ball;
         private Paddle player1Paddle;
@@ -66,6 +73,7 @@ namespace PongProject1
 
         public Game1()
         {
+            //Initialization of files and application
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
@@ -78,11 +86,6 @@ namespace PongProject1
             menu = new Menu(this);
             menu.InitializeMenu();
             Window.Title = "Pong";
-            
-            // required vars: 
-            // screen width / height
-            // settings
-            //
 
             menu.InitializeMenu();
             
@@ -100,7 +103,7 @@ namespace PongProject1
 
         internal void StartGame(int livesPlayer1, int livesPlayer2, int typePlayer1, int typePlayer2)
         {
-            
+            //Setup ball and paddles according to settings
             ball = new Ball(this);
             player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true, typePlayer1);
             player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false, typePlayer2);
@@ -108,6 +111,7 @@ namespace PongProject1
             player2Paddle.Load(Content, player2PaddleFileName);
             ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
             
+            //Set up other settings
             menuOpen = false;
             player1Lives = livesPlayer1;
             player2Lives = livesPlayer2;

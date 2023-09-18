@@ -10,6 +10,7 @@ namespace PongProject1
 {
     internal class Paddle
     {
+        //Paddle related variables
         internal int type;
         internal Vector2 Position;
         internal bool Active = false;
@@ -20,6 +21,7 @@ namespace PongProject1
         internal bool IsFacingRight;
         internal float AIerror;
 
+        //Miscellaneous variables
         private Ball ball;
         private int screenHeight;
         private int screenWidth;
@@ -28,6 +30,7 @@ namespace PongProject1
         private Keys upKey;
         private Keys downKey;
         private SettingsStruct Settings;
+        //Unused ?
         internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball, SettingsStruct settings)
         {
             this.ball = ball;
@@ -44,6 +47,7 @@ namespace PongProject1
             Settings = settings;
         }
         
+        //Paddle constructor
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
         {
             ball = game.ball;
@@ -71,10 +75,14 @@ namespace PongProject1
             }
             
         }
+        
+        //Runs upon game starting in Game1.StartGame()
         internal void Reset()
         {
             Position = startingPosition;
         }
+        
+        //Loads in the visual aspects of the paddle, including its starting position
         internal void Load(ContentManager content, string paddleFileName)
         {
             texture = content.Load<Texture2D>(paddleFileName);
@@ -86,6 +94,7 @@ namespace PongProject1
             width = texture.Width;
         }
 
+        //Handles the frame by frame inputs of the paddle
         internal void Update(GameTime gameTime)
         {
             if (!Active)
@@ -110,6 +119,8 @@ namespace PongProject1
                     totalMovement = HumanUpdate(gameTime);
                     break;
             }
+            
+            //Updates the position of the paddle and the height collision check
             Position.Y += totalMovement;
             if (Position.Y < 0)
                 Position.Y = 0;
@@ -117,6 +128,8 @@ namespace PongProject1
                 Position.Y = screenHeight - height;
         }
 
+        #region  Input handeling
+        //The player controller of the paddle
         private float HumanUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
@@ -133,6 +146,7 @@ namespace PongProject1
             return totalMovement;
         }
 
+        #region AI
         //The AI when easy mode is selected
         internal float EasyAIUpdate(GameTime gameTime)
         {
@@ -234,7 +248,10 @@ namespace PongProject1
             // set rng between a range of -0.5 * height - errorMargin and 0.5 * height + errorMargin
             AIerror = ((float)rng.NextDouble() - 0.5f) * (height + errorMargin);
         }
+        #endregion
+        #endregion
 
+        //Updates the visuals of the paddle
         internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
         {
             if (!Visible)
@@ -244,6 +261,7 @@ namespace PongProject1
         }
     }
 
+    //Used to calculate where the ball will be when crossing the x axis of a paddle
     internal class FakeBall
     {
         internal Vector2 Position;
@@ -258,6 +276,7 @@ namespace PongProject1
             height = ball.Texture.Height;
         }
 
+        //Simulates the movement of the ball
         internal void Update(GameTime gameTime)
         {
             Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
