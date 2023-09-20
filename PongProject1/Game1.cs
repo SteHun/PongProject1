@@ -55,9 +55,6 @@ namespace PongProject1
         public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
         public SpriteFont arialFont;
-        // declares struct and sets default values
-        //^
-        //Where?
 
         //Game settings and values
         private Menu menu;
@@ -67,6 +64,7 @@ namespace PongProject1
         private int player1Lives;
         private int player2Lives;
         
+        //Checks used to see if we are in game
         private bool menuOpen = true;
         private bool gamePaused;
         private bool pauseKeyPressedLastFrame;
@@ -83,15 +81,17 @@ namespace PongProject1
 
         protected override void Initialize()
         {
+            //Start in the menu
             menu = new Menu(this);
             menu.InitializeMenu();
+            
+            //Give application a name
             Window.Title = "Pong";
-
-            menu.InitializeMenu();
             
             base.Initialize();
         }
 
+        //Load textures
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -124,11 +124,13 @@ namespace PongProject1
             player2Paddle.Reset();
         }
 
+        //Exit() can only be accessed by Game1.cs, ExitGame() is project wide
         internal void ExitGame()
         {
             Exit();
         }
 
+        //When stopping a match (doesn't exit the program)
         private void QuitGame()
         {
             menuOpen = true;
@@ -139,8 +141,10 @@ namespace PongProject1
             ball.Active = false;
             ball.Visible = false;
         }
+        
         protected override void Update(GameTime gameTime)
         {
+            //Don't run rest of Update() if menu is open
             if (menuOpen)
             {
                 menu.UpdateMenu();
@@ -148,11 +152,13 @@ namespace PongProject1
                 return;
             }
             
+            //Exit program if pressing shortcut
             if (Keyboard.GetState().IsKeyDown(Settings.quitKey))
             {
                 ExitGame();
             }
 
+            //Pause game if pressing shortcut
             if (Keyboard.GetState().IsKeyDown(Settings.pauseKey) && !pauseKeyPressedLastFrame)
             {
                 gamePaused = !gamePaused;
@@ -163,29 +169,28 @@ namespace PongProject1
                 pauseKeyPressedLastFrame = false;
             }
 
+            //Don't run rest of Update() if game is paused
             if (gamePaused)
             {
                 base.Update(gameTime);
                 return;
             }
             
+            //Update ball
             ball.Update(gameTime);
 
-            // if (Keyboard.GetState().IsKeyDown(pauseKey))
-            // {
-            //     QuitGame();
-            //     StartGame();
-            // }
-
+            //Update paddle
             player1Paddle.Update(gameTime);
             player2Paddle.Update(gameTime);
 
+            //Check if a player has scored
             if (ball.PlayerHasScored)
             {
+                //If player 1 has scored
                 if (ball.ScoringPlayer == 1)
                 {
                     player2Lives--;
-                    if (player2Lives <= 0)
+                    if (player2Lives <= 0) //If the opposing player lost all their lives
                     {
                         menu.GameOver("Player 1");
                         QuitGame();
@@ -193,10 +198,10 @@ namespace PongProject1
                         return;
                     }
                 }
-                else
+                else //If player 2 has scored
                 {
                     player1Lives--;
-                    if (player1Lives <= 0)
+                    if (player1Lives <= 0) //If the opposing player lost all their lives
                     {
                         menu.GameOver("Player 2");
                         QuitGame();
@@ -205,24 +210,26 @@ namespace PongProject1
                     }
                 }
 
-
-
-                // Code for handling resetting the field (a timeout???) here
+                //In case of error: If a player has scored but not player 1 or 2
                 ball.Respawn(gameTime);
             }
 
             base.Update(gameTime);
         }
 
+        //Visual updates
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+            //If the menu is open draw menu elements
             if (menuOpen)
-                menu.DrawMenu();
-
-            if (!menuOpen)
             {
+                menu.DrawMenu();
+            }
+            else //A match is in process
+            {
+                //Draw ball and paddles
                 ball.Draw(gameTime, spriteBatch);
                 player1Paddle.Draw(gameTime, spriteBatch);
                 player2Paddle.Draw(gameTime, spriteBatch);
@@ -239,8 +246,10 @@ namespace PongProject1
                 }
             }
 
+            //If the game is paused
             if (gamePaused)
             {
+                //Show a pause screen
                 Vector2 textSize = arialFont.MeasureString(pausedText);
                 Vector2 textPosition = new Vector2(screenWidth - textSize.X, screenHeight - textSize.Y) / 2;
                 spriteBatch.DrawString(arialFont, pausedText, textPosition, Color.Black);

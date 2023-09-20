@@ -30,11 +30,12 @@ namespace PongProject1
         private Keys upKey;
         private Keys downKey;
         private SettingsStruct Settings;
-        //Unused ?
+        
+        //Unused, remove if we don't use later
         internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball, SettingsStruct settings)
         {
             this.ball = ball;
-            type = playerType;
+            type = playerType; //Indicates if the paddle is controlled by a human or an AI ranging from easy to impossible difficulty
             this.startingPosition = startingPosition;
             this.height = height;
             this.screenHeight = screenHeight;
@@ -43,7 +44,7 @@ namespace PongProject1
             this.downKey = downKey;
             Speed = speed;
             Position = startingPosition;
-            IsFacingRight = isFacingRight;
+            IsFacingRight = isFacingRight; //Used to check if the paddle is on the right, or left side of the screen
             Settings = settings;
         }
         
@@ -52,9 +53,9 @@ namespace PongProject1
         {
             ball = game.ball;
             type = playerType;
-            this.height = game.Settings.defaultPaddleHeight;
-            this.screenHeight = game.screenHeight;
-            this.screenWidth = game.screenWidth;
+            height = game.Settings.defaultPaddleHeight;
+            screenHeight = game.screenHeight;
+            screenWidth = game.screenWidth;
             this.upKey = upKey;
             this.downKey = downKey;
             Speed = game.Settings.defaultPaddleSpeed;
@@ -63,13 +64,13 @@ namespace PongProject1
             Settings = game.Settings;
             if (isFacingRight)
             {
-                this.startingPosition = new Vector2(
+                startingPosition = new Vector2(
                     game.Settings.defaultPaddleDistanceFromEdge, 
                     (float)(game.screenHeight - game.Settings.defaultPaddleHeight) / 2);
             }
             else
             {
-                this.startingPosition = new Vector2(
+                startingPosition = new Vector2(
                     game.screenWidth - game.Settings.defaultPaddleDistanceFromEdge, 
                     (float)(game.screenHeight - game.Settings.defaultPaddleHeight) / 2);
             }
@@ -114,13 +115,13 @@ namespace PongProject1
                 case 3: //Impossible AI
                     totalMovement = ImpossibleAIUpdate(gameTime);
                     break;
-                default: //Defaults to being controlled by human if error occures
+                default: //Defaults to being controlled by human if error occurs
                     Console.WriteLine($"{type} is not a recognised AI difficulty");
                     totalMovement = HumanUpdate(gameTime);
                     break;
             }
             
-            //Updates the position of the paddle and the height collision check
+            //Updates the position of the paddle and does the height collision check
             Position.Y += totalMovement;
             if (Position.Y < 0)
                 Position.Y = 0;
@@ -153,16 +154,12 @@ namespace PongProject1
             // if the ball is facing the AI it moves to it with an error margin
             if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
             {
-                setNewAIerror(1.5f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
-                return 0;
+                SetNewAIError(1.5f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
+                return 0; //If the ball is going away from the AI, the AI will do nothing
             }
             float targetPosition = ball.Position.Y - (float)height / 2 + AIerror;
             
-            //If the ball is going away from the AI it does nothing
-            
             //Turn the targetPosition into a movement
-
-            
             if (Position.Y > targetPosition)
             {
                 return -MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
@@ -170,21 +167,21 @@ namespace PongProject1
             return MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, targetPosition - Position.Y);
         }
         
-        //The AI when hard mode is selected TODO make AI more beatable and less rigid (hard specific)
+        //The AI when hard mode is selected
         internal float HardAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
-            float targetPosition = Position.Y;
+            float targetPosition = Position.Y; //Aims to get the ball in the middle of the paddle
+            
             // if the ball is facing the AI it moves to it
             if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
             {
-                targetPosition = getPredictedBallPosition(gameTime) - ((float)height / 2);
+                targetPosition = GetPredictedBallPosition(gameTime) - ((float)height / 2);
             }
-            else
+            else //If the ball is moving away from the AI then the AI doesn't do anything
             {
                 return 0;
             }
-            //If the ball is going away from the AI it does nothing
             
             //Turn the targetPosition into a movement
             if (Position.Y > targetPosition)
@@ -202,15 +199,18 @@ namespace PongProject1
         {
             float totalMovement = 0;
             float targetPosition;
-            // if the ball is facing your way
-            if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
+            
+            //Calculate where the ball is going to be
+            if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0)) //If the ball is facing your way
             {
-                targetPosition = getPredictedBallPosition(gameTime) - ((float)height / 2);
+                targetPosition = GetPredictedBallPosition(gameTime) - (float)height / 2;
             }
-            else
+            else //Moves to the middle of the screen if the ball is moving towards the opponent (from the middle it's easier to react)
             {
                 targetPosition = (float)(screenHeight - height) / 2;
             }
+            
+            //Turns the targetPosition into a movement
             if (Position.Y > targetPosition)
             {
                 totalMovement -= MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
@@ -222,9 +222,13 @@ namespace PongProject1
             return totalMovement;
         }
 
-        private float getPredictedBallPosition(GameTime gameTime)
+        //Used to calculate where the ball will be when at the X value of the paddle
+        //Used to calculate targetPosition in the AI difficulty methods
+        private float GetPredictedBallPosition(GameTime gameTime)
         {
-            FakeBall fakeBall = new FakeBall(this.ball, screenHeight);
+            //Creates a fake ball and updates it's position until it would be where the ball will be when ball X == paddle X
+            //The Y position of the fake ball is where the AI wants to move to
+            FakeBall fakeBall = new FakeBall(ball, screenHeight);
             float leftXpos, rightXpos;
             if (IsFacingRight)
             {
@@ -246,14 +250,13 @@ namespace PongProject1
             return fakeBall.Position.Y;
         }
 
-        private void setNewAIerror(float errorOvershoot)
+        //The Easy difficulty of the AI has a margin for error to make mistakes, calculated by this method
+        private void SetNewAIError(float errorOvershoot)
         {
             Random rng = new Random();
-            Debug.WriteLine(errorOvershoot);
+            
             // set rng between a range of -0.5 * height - errorMargin and 0.5 * height + errorMargin
             AIerror = ((float)rng.NextDouble() - 0.5f) * (height * 0.8f + errorOvershoot);
-            Debug.WriteLineIf(MathF.Abs(AIerror) > (float)height / 2, $"ayo? {AIerror}, {AIerror / height}");
-
         }
         #endregion
         #endregion
@@ -264,7 +267,6 @@ namespace PongProject1
             if (!Visible)
                 return;
             _spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
-
         }
     }
 
