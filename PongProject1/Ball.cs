@@ -26,7 +26,10 @@ namespace PongProject1
         internal Vector2 Velocity;
         internal Texture2D Texture;
         internal SoundEffect BonkSFX;
+        internal SoundEffect ScoreSFX;
         internal SoundEffect SharpShotSFX;
+        internal SoundEffect SharpShotScoreSFX;
+        internal SoundEffect SharpShotDefendSFX;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
@@ -48,7 +51,10 @@ namespace PongProject1
         {
             Texture = content.Load<Texture2D>(textureFileName);
             BonkSFX = content.Load<SoundEffect>("bonk");
+            ScoreSFX = content.Load<SoundEffect>("CrowdSlowClap");
             SharpShotSFX = content.Load<SoundEffect>("CrowdOh");
+            SharpShotScoreSFX = content.Load<SoundEffect>("CrowdYay");
+            SharpShotDefendSFX = content.Load<SoundEffect>("CrowdAw");
             // if startingPosition wasn't explicitly set, set it to the centre
             if (startingPosition == default)
                 startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
@@ -84,31 +90,23 @@ namespace PongProject1
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 2;
-                //TODO play scoring sound
-                if (sharpAngle)
-                {
-                    
-                }
+                if (sharpAngle || Velocity.Length() / game.Settings.defaultStartingVelocity >= 2.5)
+                    SharpShotScoreSFX.Play();
                 else
-                {
-                    
-                }
+                    ScoreSFX.Play();
             }
             if (Position.X + Texture.Width >= game.screenWidth)
             {
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 1;
-                //TODO Play scoring sound
-                if (sharpAngle)
-                {
-                    
-                }
+                if (sharpAngle || Velocity.Length() / game.Settings.defaultStartingVelocity >= 2.5)
+                    SharpShotScoreSFX.Play();
                 else
-                {
-                    
-                }
+                    ScoreSFX.Play();
             }
+            
+            
             
             //Check if a paddle touches the ball
             float? collisionResult = CheckCollision();
@@ -118,6 +116,8 @@ namespace PongProject1
             }
 
             BonkSFX.Play(MediaPlayer.Volume, MathF.Min((Velocity.Length() * 0.25f) / game.Settings.defaultStartingVelocity - 1, 1), 0);
+            if (sharpAngle)
+                SharpShotDefendSFX.Play();
             
             totalBounces++;
             float angle;
@@ -177,6 +177,7 @@ namespace PongProject1
             Position = startingPosition;
             Active = true;
             Visible = true;
+            sharpAngle = false;
             PlayerHasScored = false;
             ScoringPlayer = 0;
             totalBounces = 0;

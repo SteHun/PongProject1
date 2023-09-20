@@ -50,11 +50,29 @@
 /processorParam:Quality=Best
 /build:bonk.mp3
 
+#begin CrowdAw.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:CrowdAw.wav
+
 #begin CrowdOh.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:CrowdOh.wav
+
+#begin CrowdSlowClap.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:CrowdSlowClap.wav
+
+#begin CrowdYay.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:CrowdYay.wav
 
 #begin redPaddle.png
 /importer:TextureImporter
@@ -67,4 +85,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:redPaddle.png
+
+#begin win.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:win.wav
 

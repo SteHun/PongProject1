@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace PongProject1
 {
-    internal enum PlayerMode {} //Can be removed?
+    internal enum PlayerMode {} //Can be removed? YES
+    
     internal struct SettingsStruct
     {
         //Keybinds
@@ -32,7 +34,6 @@ namespace PongProject1
         internal readonly float defaultMinBounceAngle = 40;
         internal readonly float defaultMaxBounceAngle = 140;
         internal readonly double defaultBallRespawnTime = 3000;
-
         public SettingsStruct()
         {
             
@@ -55,6 +56,7 @@ namespace PongProject1
         public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
         public SpriteFont arialFont;
+        private SoundEffect winSFX;
 
         //Game settings and values
         private Menu menu;
@@ -98,6 +100,7 @@ namespace PongProject1
             
             lifeIcon = Content.Load<Texture2D>(lifeIconFileName);
             arialFont = Content.Load<SpriteFont>("arialFont");
+            winSFX = Content.Load<SoundEffect>("win");
             base.LoadContent();
         }
 
@@ -194,6 +197,7 @@ namespace PongProject1
                     {
                         menu.GameOver("Player 1");
                         QuitGame();
+                        winSFX.Play();
                         base.Update(gameTime);
                         return;
                     }
@@ -205,6 +209,7 @@ namespace PongProject1
                     {
                         menu.GameOver("Player 2");
                         QuitGame();
+                        winSFX.Play();
                         base.Update(gameTime);
                         return;
                     }
