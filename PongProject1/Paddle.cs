@@ -153,15 +153,16 @@ namespace PongProject1
             // if the ball is facing the AI it moves to it with an error margin
             if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
             {
-                setNewAIerror(0.02f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
+                setNewAIerror(1.5f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
                 return 0;
             }
-
             float targetPosition = ball.Position.Y - (float)height / 2 + AIerror;
             
             //If the ball is going away from the AI it does nothing
             
             //Turn the targetPosition into a movement
+
+            
             if (Position.Y > targetPosition)
             {
                 return -MathF.Min(Speed * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y - targetPosition);
@@ -173,11 +174,15 @@ namespace PongProject1
         internal float HardAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
-            float targetPosition = screenHeight/2;
+            float targetPosition = Position.Y;
             // if the ball is facing the AI it moves to it
             if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
             {
                 targetPosition = getPredictedBallPosition(gameTime) - ((float)height / 2);
+            }
+            else
+            {
+                return 0;
             }
             //If the ball is going away from the AI it does nothing
             
@@ -238,15 +243,17 @@ namespace PongProject1
                 // This assumes the game runs at a consistent framerate
                 fakeBall.Update(gameTime);
             }
-            Debug.WriteLine(fakeBall.Position.Y);
             return fakeBall.Position.Y;
         }
 
-        private void setNewAIerror(float errorMargin)
+        private void setNewAIerror(float errorOvershoot)
         {
             Random rng = new Random();
+            Debug.WriteLine(errorOvershoot);
             // set rng between a range of -0.5 * height - errorMargin and 0.5 * height + errorMargin
-            AIerror = ((float)rng.NextDouble() - 0.5f) * (height + errorMargin);
+            AIerror = ((float)rng.NextDouble() - 0.5f) * (height * 0.8f + errorOvershoot);
+            Debug.WriteLineIf(MathF.Abs(AIerror) > (float)height / 2, $"ayo? {AIerror}, {AIerror / height}");
+
         }
         #endregion
         #endregion
