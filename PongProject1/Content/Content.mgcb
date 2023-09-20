@@ -50,6 +50,12 @@
 /processorParam:Quality=Best
 /build:bonk.mp3
 
+#begin CrowdOh.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:CrowdOh.wav
+
 #begin redPaddle.png
 /importer:TextureImporter
 /processor:TextureProcessor

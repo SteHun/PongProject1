@@ -26,6 +26,7 @@ namespace PongProject1
         internal Vector2 Velocity;
         internal Texture2D Texture;
         internal SoundEffect BonkSFX;
+        internal SoundEffect SharpShotSFX;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
@@ -47,6 +48,7 @@ namespace PongProject1
         {
             Texture = content.Load<Texture2D>(textureFileName);
             BonkSFX = content.Load<SoundEffect>("bonk");
+            SharpShotSFX = content.Load<SoundEffect>("CrowdOh");
             // if startingPosition wasn't explicitly set, set it to the centre
             if (startingPosition == default)
                 startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
@@ -119,26 +121,33 @@ namespace PongProject1
             
             totalBounces++;
             float angle;
-            
+            sharpAngle = false;
             //Change the angle of the ball
             if (Velocity.X < 0)
             {
                 angle = MapValue(minBounceAngle, maxBounceAngle, (float)collisionResult);
+                if ((angle < minBounceAngle * 1.1 || angle > maxBounceAngle * 0.9) && Velocity.Length() / game.Settings.defaultStartingVelocity >= 1.8)
+                {
+                    sharpAngle = true;
+                    Debug.WriteLine("sharp!");
+                }
             }
             else
             {
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
+                if ((angle < minBounceAngle + MathF.PI * 1.1 || angle > maxBounceAngle + MathF.PI * 0.9) && Velocity.Length() / game.Settings.defaultStartingVelocity >= 1.8)
+                {
+                    sharpAngle = true;
+                    Debug.WriteLine("sharp!");
+
+                }
             }
+
+            if (sharpAngle)
+                SharpShotSFX.Play();
             Console.WriteLine(angle);
             //TODO calculate what counts as sharpAngle
-            if (angle > 0)
-            {
-                sharpAngle = true;
-            }
-            else
-            {
-                sharpAngle = false;
-            }
+
 
             //Increase the speed of the ball
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
