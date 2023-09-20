@@ -22,6 +22,10 @@ namespace PongProject1
         //Ball variables
         private Vector2 startingPosition;
         internal Vector2 Position;
+        internal float TrueYPosition
+        {
+            get { return Position.Y + (float)Texture.Height / 2; }
+        }
         private double activationTime;
         internal Vector2 Velocity;
         internal Texture2D Texture;
