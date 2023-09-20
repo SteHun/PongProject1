@@ -15,6 +15,7 @@ namespace PongProject1
         public bool Visible;
         public bool PlayerHasScored;
         public byte ScoringPlayer;
+        private bool sharpAngle; //Used to check if the player returns the ball in a manner that has a high Y velocity
         
         //Ball variables
         private Vector2 startingPosition;
@@ -77,12 +78,30 @@ namespace PongProject1
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 2;
+                //TODO play scoring sound
+                if (sharpAngle)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
             }
             if (Position.X + Texture.Width >= game.screenWidth)
             {
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 1;
+                //TODO Play scoring sound
+                if (sharpAngle)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
             }
             
             //Check if a paddle touches the ball
@@ -103,6 +122,16 @@ namespace PongProject1
             else
             {
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
+            }
+            Console.WriteLine(angle);
+            //TODO calculate what counts as sharpAngle
+            if (angle > 0)
+            {
+                sharpAngle = true;
+            }
+            else
+            {
+                sharpAngle = false;
             }
 
             //Increase the speed of the ball

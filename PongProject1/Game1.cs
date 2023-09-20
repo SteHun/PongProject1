@@ -166,7 +166,7 @@ namespace PongProject1
             }
             else if (!Keyboard.GetState().IsKeyDown(Settings.pauseKey))
             {
-                pauseKeyPressedLastFrame = false;
+                pauseKeyPressedLastFrame = false; 
             }
 
             //Don't run rest of Update() if game is paused
