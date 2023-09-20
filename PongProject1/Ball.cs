@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace PongProject1
 {
@@ -23,6 +25,7 @@ namespace PongProject1
         private double activationTime;
         internal Vector2 Velocity;
         internal Texture2D Texture;
+        internal SoundEffect BonkSFX;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
@@ -43,6 +46,7 @@ namespace PongProject1
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddlesImport)
         {
             Texture = content.Load<Texture2D>(textureFileName);
+            BonkSFX = content.Load<SoundEffect>("bonk");
             // if startingPosition wasn't explicitly set, set it to the centre
             if (startingPosition == default)
                 startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
@@ -108,9 +112,11 @@ namespace PongProject1
             float? collisionResult = CheckCollision();
             if (!collisionResult.HasValue)
             {
-                return; //Don't change angle and don't increase speed if a player scores
+                return; //Do nothing if no paddles are hitting the ball
             }
 
+            BonkSFX.Play(MediaPlayer.Volume, MathF.Min((Velocity.Length() * 0.25f) / game.Settings.defaultStartingVelocity - 1, 1), 0);
+            
             totalBounces++;
             float angle;
             
