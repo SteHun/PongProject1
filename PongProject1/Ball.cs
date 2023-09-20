@@ -17,7 +17,7 @@ namespace PongProject1
         public bool Visible;
         public bool PlayerHasScored;
         public byte ScoringPlayer;
-        private bool sharpAngle; //Used to check if the player returns the ball in a manner that has a high Y velocity
+        private bool sharpShot; //Used to check if the player returns the ball in a manner that has a high Y velocity
         
         //Ball variables
         private Vector2 startingPosition;
@@ -49,12 +49,16 @@ namespace PongProject1
         //Load textures, set positions and put paddles in array
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddlesImport)
         {
+            //Sprites
             Texture = content.Load<Texture2D>(textureFileName);
+            
+            //Sound effects
             BonkSFX = content.Load<SoundEffect>("bonk");
             ScoreSFX = content.Load<SoundEffect>("CrowdSlowClap");
             SharpShotSFX = content.Load<SoundEffect>("CrowdOh");
             SharpShotScoreSFX = content.Load<SoundEffect>("CrowdYay");
             SharpShotDefendSFX = content.Load<SoundEffect>("CrowdAw");
+            
             // if startingPosition wasn't explicitly set, set it to the centre
             if (startingPosition == default)
                 startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
@@ -85,24 +89,31 @@ namespace PongProject1
             }
 
             //Check if a player has scored
-            if (Position.X <= 0)
+            float requiredSpeedRatio = 2.5f;
+            if (Position.X <= 0) //Player 2 scores
             {
+                //Flags to update score and start next serve
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 2;
-                if (sharpAngle || Velocity.Length() / game.Settings.defaultStartingVelocity >= 2.5)
+                
+                //Plays a different sound effect depending on if the point was scored with a 'sharp shot' or the ball was travelling fast enough
+                if (sharpShot || Velocity.Length() / game.Settings.defaultStartingVelocity >= requiredSpeedRatio)
                     SharpShotScoreSFX.Play();
-                else
+                else //Default scoring sound
                     ScoreSFX.Play();
             }
-            if (Position.X + Texture.Width >= game.screenWidth)
+            if (Position.X + Texture.Width >= game.screenWidth) //Player 1 scores
             {
+                //Flags to update score and start next serve
                 Active = false;
                 PlayerHasScored = true;
                 ScoringPlayer = 1;
-                if (sharpAngle || Velocity.Length() / game.Settings.defaultStartingVelocity >= 2.5)
+                
+                //Plays a different sound effect depending on if the point was scored with a 'sharp shot' or the ball was travelling fast enough
+                if (sharpShot || Velocity.Length() / game.Settings.defaultStartingVelocity >= requiredSpeedRatio)
                     SharpShotScoreSFX.Play();
-                else
+                else //Default scoring sound
                     ScoreSFX.Play();
             }
             
@@ -115,50 +126,52 @@ namespace PongProject1
                 return; //Do nothing if no paddles are hitting the ball
             }
 
-            BonkSFX.Play(MediaPlayer.Volume, MathF.Min((Velocity.Length() * 0.25f) / game.Settings.defaultStartingVelocity - 1, 1), 0);
-            if (sharpAngle)
+            //Play a sound effect if the ball is hit by a paddle
+            BonkSFX.Play(MediaPlayer.Volume, MathF.Min(Velocity.Length() * 0.25f / game.Settings.defaultStartingVelocity - 1, 1), 0);
+            
+            //Play a sound effect if the previous hit was a sharp shot (this means a player has defended against a 'hard' ball)
+            if (sharpShot)
                 SharpShotDefendSFX.Play();
             
             totalBounces++;
             float angle;
-            sharpAngle = false;
+            sharpShot = false;
+            
             //Change the angle of the ball
             if (Velocity.X < 0)
             {
                 angle = MapValue(minBounceAngle, maxBounceAngle, (float)collisionResult);
+                
+                //If a ball is hit with great speed in the Y axis then it is called a 'sharp shot' (This is most likely a harder ball to defend against)
                 if ((angle < minBounceAngle * 1.1 || angle > maxBounceAngle * 0.9) && Velocity.Length() / game.Settings.defaultStartingVelocity >= 1.8)
                 {
-                    sharpAngle = true;
-                    Debug.WriteLine("sharp!");
+                    sharpShot = true;
                 }
             }
             else
             {
                 angle = MapValue(minBounceAngle + MathF.PI, maxBounceAngle + MathF.PI, (float)-collisionResult);
+                
+                //If a ball is hit with great speed in the Y axis then it is called a 'sharp shot' (This is most likely a harder ball to defend against)
                 if ((angle < minBounceAngle + MathF.PI * 1.1 || angle > maxBounceAngle + MathF.PI * 0.9) && Velocity.Length() / game.Settings.defaultStartingVelocity >= 1.8)
                 {
-                    sharpAngle = true;
-                    Debug.WriteLine("sharp!");
-
+                    sharpShot = true;
                 }
             }
 
-            if (sharpAngle)
+            if (sharpShot)
                 SharpShotSFX.Play();
-            Console.WriteLine(angle);
-            //TODO calculate what counts as sharpAngle
-
 
             //Increase the speed of the ball
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
         }
 
         //Update the visuals position of the ball
-        internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
+        internal void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (!Visible)
                 return;
-            _spriteBatch.Draw(Texture, Position, Color.White);
+            spriteBatch.Draw(Texture, Position, Color.White);
         }
 
         //Reset the values of the ball if someone has scored and both players are still alive
@@ -177,7 +190,7 @@ namespace PongProject1
             Position = startingPosition;
             Active = true;
             Visible = true;
-            sharpAngle = false;
+            sharpShot = false;
             PlayerHasScored = false;
             ScoringPlayer = 0;
             totalBounces = 0;

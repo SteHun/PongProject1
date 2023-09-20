@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
 // ReSharper disable InconsistentNaming
@@ -21,11 +22,13 @@ namespace PongProject1
 
         //Menu toggle lists
         private readonly string[] playerType = {"Human", "AI Easy", "AI Hard", "AI Impossible"};
-        private readonly int[] lives = { 1, 2, 3, 4, 5 };
+        private readonly int[] lives = {1, 2, 3, 4, 5};
+        private readonly float[] volume = {0f, 0.25f, 0.5f, 0.75f, 1f};
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex = 2;
         private byte player2TypeIndex;
         private byte player2LivesIndex = 2;
+        private byte soundEffectsIndex = 4; //Starts at 100% volume
 
         //Keybinds
         private byte variablePosition; //This is used to indicate what keybind is being changed
@@ -52,6 +55,8 @@ namespace PongProject1
         #region Initialize method
         public void InitializeMenu()
         {
+            SoundEffect.MasterVolume = volume[soundEffectsIndex];
+            
             //Menu setup
             menuIndex = 0;
             menuState = MenuState.MainMenu;
@@ -73,11 +78,15 @@ namespace PongProject1
         #region Update method
         public void UpdateMenu()
         {
+            //Controls movement and runs code if a keybind is pressed
             MenuMovement();
             CheckForKeybind();
 
+            //Update timers
             if(quitWaitTime > 0) quitWaitTime--;
             if (noInputWaitTime > 0) noInputWaitTime--;
+            
+            //Give a popup text if the player hasn't moved on the main menu for a while (indicating they don't know the controls)
             if (Keyboard.GetState().IsKeyDown(menuUpKey) || Keyboard.GetState().IsKeyDown(menuDownKey)) //Removes tip on how to use menu if menu button is pressed
             {
                 noInputWaitTime = 900;
@@ -86,6 +95,9 @@ namespace PongProject1
         #endregion
 
         #region Draw method
+        //Contains all the text that needs to be displayed depending on the active menu
+        //MenuString() is a shorter version of spriteBatch.DrawString() with a lot of default values filled in
+        //The index is used for positioning of text and to keep track what to highlight
         public void DrawMenu()
         {
             switch (menuState)
@@ -125,7 +137,10 @@ namespace PongProject1
 
                 case MenuState.Settings:
                     MenuString("Controls", 0);
-                    MenuString("Back", 1);
+                    MenuString("Sound FX", 1);
+                    MenuString("Back", 2);
+                    
+                    MenuString2ndRow($"{(volume[soundEffectsIndex]*100)}%", 1);
                     break;
 
                 case MenuState.Controls:
@@ -204,7 +219,7 @@ namespace PongProject1
 
         private void MenuMovement() //Handles all the movement in menus
         {
-            //In case of bugs
+            //Shouldn't happen, but in case of bugs
             if (menuIndex > GetMenuLength())
             {
                 menuIndex = 0;
@@ -216,6 +231,7 @@ namespace PongProject1
                 game.ExitGame();
             }
 
+            //Quick start match key
             if (Keyboard.GetState().IsKeyDown(quickStartKey) && !quickStartHeld)
             {
                 quickStartHeld = true;
@@ -281,7 +297,8 @@ namespace PongProject1
             }
         }
 
-        private void MenuEffect() //Handles the effect of pressing the select button over a menu element
+        //Handles the effect of pressing the select button over a menu element
+        private void MenuEffect() 
         {
             switch (menuState)
             {
@@ -332,12 +349,17 @@ namespace PongProject1
                     {
                         case (byte)Settings.Controls:
                             menuState = MenuState.Controls;
+                            menuIndex = 0;
+                            break;
+                        case (byte)Settings.SoundEffects:
+                            soundEffectsIndex = (byte)ToggleNext(volume, soundEffectsIndex);
+                            SoundEffect.MasterVolume = volume[soundEffectsIndex]; //Actually changes volume
                             break;
                         case (byte)Settings.Back:
                             menuState = MenuState.MainMenu;
+                            menuIndex = 0;
                             break;
                     }
-                    menuIndex = 0;
                     break;
 
                 case MenuState.Controls:
@@ -361,13 +383,15 @@ namespace PongProject1
         #endregion
 
         #region Other methods
-        private void CheckForKeybind()
+        private void CheckForKeybind() //Used to check what the new key is for a keybind
         {
+            //Return if not supposed to be selecting a key
             if (menuState != MenuState.SelectingKey) return;
             Keys[] pressedKeys = Keyboard.GetState().GetPressedKeys();
             if (pressedKeys.Length <= 0) return;
-            if (menuSelectHeld) return;
+            if (menuSelectHeld) return; //Without this every key is automatically set to the select key
 
+            //Find out which variable that holds the keybind the new key should be assigned to
             switch (variablePosition)
             {
                 case 0:
@@ -408,6 +432,7 @@ namespace PongProject1
                     break;
             }
 
+            //Move back to controls menu
             menuSelectHeld = true;
             menuState = MenuState.Controls;
         }
@@ -432,9 +457,19 @@ namespace PongProject1
 
             return index + 1;
         }
+        
+        private int ToggleNext(float[] array, byte index) //Get next element in array (and loop if necessary)
+        {
+            if (index == array.Length - 1)
+            {
+                return 0;
+            }
+
+            return index + 1;
+        }
         #endregion
 
-        public void GameOver(string winner)
+        public void GameOver(string winner) //When a match is finished move to the winner screen
         {
             menuState = MenuState.Winner;
             menuIndex = 0;
@@ -475,7 +510,7 @@ namespace PongProject1
             Quit
         }
 
-        enum Lobby : byte //All selectable options just before a match (can select opponent, handicap and rules)
+        enum Lobby : byte //All selectable options just before a match (can select opponent and amount of lives)
         {
             Start,
             Player1Player, //Human or AI (and what difficulty)
@@ -488,6 +523,7 @@ namespace PongProject1
         enum Settings : byte //All selectable options within Settings
         {
             Controls,
+            SoundEffects,
             Back,
         }
         
