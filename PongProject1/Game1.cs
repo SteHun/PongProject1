@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -88,7 +89,7 @@ namespace PongProject1
             menu.InitializeMenu();
             
             //Give application a name
-            Window.Title = "Pong";
+            Window.Title = "Pong by Philip and Stefan";
             
             base.Initialize();
         }
@@ -218,7 +219,10 @@ namespace PongProject1
                 //In case of error: If a player has scored but not player 1 or 2
                 ball.Respawn(gameTime);
             }
-
+            
+            //Protecting copyright
+            if (!(Window.Title.ToLower().Contains("philip") && Window.Title.ToLower().Contains("stefan")))
+                throw (new Exception("The program has thrown an error to protect copyright!"));
             base.Update(gameTime);
         }
 
