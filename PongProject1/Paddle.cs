@@ -157,7 +157,7 @@ namespace PongProject1
                 SetNewAIError(1.5f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
                 return 0; //If the ball is going away from the AI, the AI will do nothing
             }
-            float targetPosition = ball.Position.Y - (float)height / 2 + AIerror;
+            float targetPosition = ball.TrueYPosition - (float)height / 2 + AIerror;
             
             //Turn the targetPosition into a movement
             if (Position.Y > targetPosition)
@@ -247,7 +247,7 @@ namespace PongProject1
                 // This assumes the game runs at a consistent framerate
                 fakeBall.Update(gameTime);
             }
-            return fakeBall.Position.Y;
+            return fakeBall.TrueYPosition;
         }
 
         //The Easy difficulty of the AI has a margin for error to make mistakes, calculated by this method
@@ -274,6 +274,10 @@ namespace PongProject1
     internal class FakeBall
     {
         internal Vector2 Position;
+        internal float TrueYPosition
+        {
+            get { return Position.Y + (float)height / 2; }
+        }
         internal Vector2 Velocity;
         private int screenHeight;
         private int height;
