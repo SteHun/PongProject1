@@ -68,6 +68,7 @@ namespace PongProject1
         private Texture2D lifeIcon;
         public SpriteFont arialFont;
         private SoundEffect winSFX;
+        public Color backgroundColor;
 
         //Game settings and values
         private Menu menu;
@@ -239,7 +240,7 @@ namespace PongProject1
         //Visual updates
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(backgroundColor);
             spriteBatch.Begin();
             //If the menu is open draw menu elements
             if (menuOpen)

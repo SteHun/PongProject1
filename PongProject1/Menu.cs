@@ -17,17 +17,20 @@ namespace PongProject1
         private Vector2 menuTextTopLeftPosition; //The position where the first element of the menu is drawn
         private Vector2 menu2ndRowTopLeftPosition; //The position where the first element of the 2nd row (in case it exists) of the menu is drawn
         private Vector2 menuTextGap; //The gap between every element of text
+        private Color textColor; //The color of the text when not highlighted
         private short noInputWaitTime; //A delay before a tip on menu controls is shown on the main menu in frames
         private byte quitWaitTime; //A delay before the quit button can be pressed in frames 
 
         //Menu toggle lists
         private readonly string[] playerType = {"Human", "AI Easy", "AI Hard", "AI Impossible"};
         private readonly int[] lives = {1, 2, 3, 4, 5};
+        private readonly string[] theme = { "Light", "Dark" };
         private readonly float[] volume = {0f, 0.25f, 0.5f, 0.75f, 1f};
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex = 2;
         private byte player2TypeIndex;
         private byte player2LivesIndex = 2;
+        private byte themeIndex;
         private byte soundEffectsIndex = 4; //Starts at 100% volume
 
         //Keybinds
@@ -72,6 +75,8 @@ namespace PongProject1
             menuSelectKey = Keys.Enter;
             debugModeKey = Keys.F1;
             quickStartKey = Keys.F2;
+            
+            ChangeTheme();
         }
         #endregion
 
@@ -137,10 +142,12 @@ namespace PongProject1
 
                 case MenuState.Settings:
                     MenuString("Controls", 0);
-                    MenuString("Sound FX", 1);
-                    MenuString("Back", 2);
+                    MenuString("Theme", 1);
+                    MenuString("Sound FX", 2);
+                    MenuString("Back", 3);
                     
-                    MenuString2ndRow($"{(volume[soundEffectsIndex]*100)}%", 1);
+                    MenuString2ndRow(theme[themeIndex], 1);
+                    MenuString2ndRow($"{volume[soundEffectsIndex]*100}%", 2);
                     break;
 
                 case MenuState.Controls:
@@ -173,11 +180,11 @@ namespace PongProject1
                     break;
 
                 case MenuState.SelectingKey:
-                    game.spriteBatch.DrawString(game.arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), Color.White);
+                    game.spriteBatch.DrawString(game.arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), textColor);
                     break;
 
                 case MenuState.Winner:
-                    game.spriteBatch.DrawString(game.arialFont, $"{winningPlayer} has won!", new Vector2(200, 300), Color.White);
+                    game.spriteBatch.DrawString(game.arialFont, $"{winningPlayer} has won!", new Vector2(200, 300), textColor);
                     break;
             }
         }
@@ -191,7 +198,7 @@ namespace PongProject1
                 return Color.Yellow;
             }
 
-            return Color.White;
+            return textColor;
         }
 
         private byte GetMenuLength() //Gets the byte value of the last element in the current menu enum
@@ -351,6 +358,10 @@ namespace PongProject1
                             menuState = MenuState.Controls;
                             menuIndex = 0;
                             break;
+                        case (byte)Settings.Theme:
+                            themeIndex = (byte)ToggleNext(theme, themeIndex);
+                            ChangeTheme();
+                            break;
                         case (byte)Settings.SoundEffects:
                             soundEffectsIndex = (byte)ToggleNext(volume, soundEffectsIndex);
                             SoundEffect.MasterVolume = volume[soundEffectsIndex]; //Actually changes volume
@@ -476,6 +487,21 @@ namespace PongProject1
             winningPlayer = winner;
         }
 
+        private void ChangeTheme()
+        {
+            switch (theme[themeIndex])
+            {
+                case "Light":
+                    game.backgroundColor = Color.CornflowerBlue;
+                    textColor = Color.White;
+                    break;
+                case "Dark":
+                    game.backgroundColor = Color.Black;
+                    textColor = Color.LightGray;
+                    break;
+            }
+        }
+
         #region MenuString methods
         //This method is used to more quickly type DrawString(), which has multiple parameters that are constantly the same
         private void MenuString(string text, byte index)
@@ -523,6 +549,7 @@ namespace PongProject1
         enum Settings : byte //All selectable options within Settings
         {
             Controls,
+            Theme,
             SoundEffects,
             Back,
         }
