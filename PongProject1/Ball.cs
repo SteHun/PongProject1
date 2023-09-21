@@ -93,7 +93,7 @@ namespace PongProject1
             }
 
             //Check if a player has scored
-            float requiredSpeedRatio = 2.5f;
+            float requiredSpeedRatio = 4f;
             if (Position.X <= 0) //Player 2 scores
             {
                 //Flags to update score and start next serve
