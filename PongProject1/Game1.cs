@@ -4,6 +4,16 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+/* ----EXTRA FEATURES----
+- A menu to start the game and to change settings
+- 3 difficulties of computer players
+- Sound effects
+- Pause
+(there may be more I forgot) 
+ */
+
+
+
 namespace PongProject1
 {
     internal enum PlayerMode {} //Can be removed? YES
