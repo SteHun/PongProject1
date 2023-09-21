@@ -172,14 +172,19 @@ namespace PongProject1
         {
             float totalMovement = 0;
             float targetPosition = Position.Y; //Aims to get the ball in the middle of the paddle
+            int distanceBeforeReaction = 180; //Makes the AI wait a bit before moving to the position of the ball coming it's way
+            //Conditions for hard AI paddle to move
+            bool leftSideCheck = IsFacingRight && ball.Velocity.X < 0 && ball.Position.X < screenWidth - distanceBeforeReaction;
+            bool rightSideCheck = !IsFacingRight && ball.Velocity.X > 0 && ball.Position.X > distanceBeforeReaction;
             
             // if the ball is facing the AI it moves to it
-            if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0))
+            if (leftSideCheck || rightSideCheck)
             {
-                targetPosition = GetPredictedBallPosition(gameTime) - ((float)height / 2);
+                targetPosition = GetPredictedBallPosition(gameTime) - (float)height / 2 + AIerror;
             }
             else //If the ball is moving away from the AI then the AI doesn't do anything
             {
+                SetNewAIError(1); //AI error is used just to add variety to the returns, it actually makes the AI stronger
                 return 0;
             }
             
@@ -203,11 +208,12 @@ namespace PongProject1
             //Calculate where the ball is going to be
             if ((IsFacingRight && ball.Velocity.X < 0) || (!IsFacingRight && ball.Velocity.X > 0)) //If the ball is facing your way
             {
-                targetPosition = GetPredictedBallPosition(gameTime) - (float)height / 2;
+                targetPosition = GetPredictedBallPosition(gameTime) - (float)height / 2 + AIerror;
             }
             else //Moves to the middle of the screen if the ball is moving towards the opponent (from the middle it's easier to react)
             {
                 targetPosition = (float)(screenHeight - height) / 2;
+                SetNewAIError(1); //AI error is used just to add variety to the returns, it actually makes the AI stronger
             }
             
             //Turns the targetPosition into a movement
