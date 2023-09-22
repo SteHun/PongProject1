@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 /* ----EXTRA FEATURES----
 - A menu to start the game and to change settings
 - The option to select keybinds
-- The option to select a theme, affecting the color of the background and text
+- The option to select a theme
 - 3 difficulties of computer players
 - Sound effects
 - Pause
@@ -32,7 +32,7 @@ namespace PongProject1
         internal Keys quickStartKey = Keys.F1;
 
         //Paddle related variables
-        internal readonly int defaultPaddleHeight = 100;
+        internal readonly int defaultPaddleHeight = 96;
         internal readonly int defaultPaddleSpeed = 300;
         internal readonly int defaultPaddleDistanceFromEdge = 40;
 
@@ -54,10 +54,13 @@ namespace PongProject1
     {
         //Initialization of files and application
         internal SettingsStruct Settings = new ();
-        private const string ballFileName = "ball";
+        private const string ballFileName = "ball"; //Old ball
+        private const string biggerBallFileName = "Bigger_Ball";
+        private const string neonBallFileName = "Neon_ball";
         private const string lifeIconFileName = "ball";
         private const string player1PaddleFileName = "bluePaddle";
         private const string player2PaddleFileName = "redPaddle";
+        private const string paddleSizeFileName = "Paddle_size";
         internal readonly int screenWidth;
         internal readonly int screenHeight;
         private const string pausedText = "GAME PAUSED";
@@ -124,9 +127,23 @@ namespace PongProject1
             ball = new Ball(this);
             player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true, typePlayer1);
             player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false, typePlayer2);
-            player1Paddle.Load(Content, player1PaddleFileName);
-            player2Paddle.Load(Content, player2PaddleFileName);
-            ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
+            if (menu.theme[menu.themeIndex] == "Light")
+            {
+                player1Paddle.Load(Content, player1PaddleFileName);
+                player2Paddle.Load(Content, player2PaddleFileName);
+                
+                ball.Load(Content, biggerBallFileName, new[] {player1Paddle, player2Paddle});
+            }
+            else
+            {
+                player1Paddle.Load(Content, paddleSizeFileName);
+                player2Paddle.Load(Content, paddleSizeFileName);
+                
+                ball.Load(Content, neonBallFileName, new[] {player1Paddle, player2Paddle});
+            }
+            
+            //Old ball, remove if satisfied with changes
+            //ball.Load(Content, ballFileName, new[] { player1Paddle, player2Paddle });
             
             //Set up other settings
             menuOpen = false;
@@ -266,9 +283,9 @@ namespace PongProject1
             else //A match is in process
             {
                 //Draw ball and paddles
+                player1Paddle.Draw(spriteBatch, menu.theme[menu.themeIndex]);
+                player2Paddle.Draw(spriteBatch, menu.theme[menu.themeIndex]);
                 ball.Draw(gameTime, spriteBatch);
-                player1Paddle.Draw(spriteBatch);
-                player2Paddle.Draw(spriteBatch);
                 
                 // Draw lives of player 1
                 for (int i = 0; i < player1Lives; i++)

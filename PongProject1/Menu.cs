@@ -24,13 +24,13 @@ namespace PongProject1
         //Menu toggle lists
         private readonly string[] playerType = {"Human", "AI Easy", "AI Hard", "AI Impossible"};
         private readonly int[] lives = {1, 2, 3, 4, 5};
-        private readonly string[] theme = { "Light", "Dark" };
+        public readonly string[] theme = { "Light", "Dark" };
         private readonly float[] volume = {0f, 0.25f, 0.5f, 0.75f, 1f};
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex = 2;
         private byte player2TypeIndex;
         private byte player2LivesIndex = 2;
-        private byte themeIndex;
+        public byte themeIndex;
         private byte soundEffectsIndex = 4; //Starts at 100% volume
         
         //This is used to indicate what keybind is being changed

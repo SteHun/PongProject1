@@ -29,6 +29,10 @@ namespace PongProject1
         private Keys downKey;
         private SettingsStruct Settings;
         
+        private const string paddleRedFileName = "Paddle_red"; //Test
+        private const string paddleBlueFileName = "Paddle_blue"; //Test
+        private Texture2D visibleTexture;
+        
         //Paddle constructor
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
         {
@@ -68,6 +72,17 @@ namespace PongProject1
         internal void Load(ContentManager content, string paddleFileName)
         {
             texture = content.Load<Texture2D>(paddleFileName);
+            
+            
+            if (IsFacingRight)
+            {
+                visibleTexture = content.Load<Texture2D>(paddleRedFileName);
+            }
+            else
+            {
+                visibleTexture = content.Load<Texture2D>(paddleBlueFileName);
+            }
+            
             if (!IsFacingRight)
             {
                 startingPosition.X -= texture.Width;
@@ -112,11 +127,19 @@ namespace PongProject1
         }
         
         //Updates the visuals of the paddle
-        internal void Draw(SpriteBatch spriteBatch)
+        internal void Draw(SpriteBatch spriteBatch, string theme)
         {
             if (!Visible)
                 return;
-            spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
+
+            if (theme == "Light")
+            {
+                spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
+            }
+            else //Theme is equal to Dark
+            {
+                spriteBatch.Draw(visibleTexture, new Rectangle((int)MathF.Round(Position.X - 20), (int)MathF.Round(Position.Y - 20), visibleTexture.Width, visibleTexture.Height), Color.White);
+            }
         }
         #endregion
 
