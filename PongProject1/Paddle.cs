@@ -138,7 +138,12 @@ namespace PongProject1
             }
             else //Theme is equal to Dark
             {
-                spriteBatch.Draw(visibleTexture, new Rectangle((int)MathF.Round(Position.X - 20), (int)MathF.Round(Position.Y - 20), visibleTexture.Width, visibleTexture.Height), Color.White);
+                Rectangle positionRect = new Rectangle(
+                    (int)MathF.Round(Position.X - (float)(visibleTexture.Width - texture.Width) / 2),
+                    (int)MathF.Round(Position.Y - (float)(visibleTexture.Height - texture.Height) / 2),
+                    visibleTexture.Width, visibleTexture.Height
+                );
+                spriteBatch.Draw(visibleTexture, positionRect, Color.White);
             }
         }
         #endregion
