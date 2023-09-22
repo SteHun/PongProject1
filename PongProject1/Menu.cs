@@ -32,14 +32,10 @@ namespace PongProject1
         private byte player2LivesIndex = 2;
         private byte themeIndex;
         private byte soundEffectsIndex = 4; //Starts at 100% volume
-
-        //Keybinds
-        private byte variablePosition; //This is used to indicate what keybind is being changed
-        private Keys menuUpKey; //These are menu specific keybinds, other keybinds are stored in Game1 Settings struct
-        private Keys menuDownKey;
-        private Keys menuSelectKey;
-        private Keys quickStartKey;
-
+        
+        //This is used to indicate what keybind is being changed
+        private byte variablePosition; 
+        
         //Checks if key is being held down, used to avoid inputting action every frame and instead only on first frame of press
         private bool menuUpHeld;
         private bool menuDownHeld;
@@ -65,14 +61,10 @@ namespace PongProject1
             menuTextTopLeftPosition = new Vector2(50, 50);
             menu2ndRowTopLeftPosition = new Vector2(350, 50);
             menuTextGap = new Vector2(0, 35);
-            noInputWaitTime = 900; //In frames (60 fps, so 15 seconds)
+            noInputWaitTime = 360; //In frames (60 fps, so 6 seconds)
 
             //Default keybinds setup
             variablePosition = 0;
-            menuUpKey = Keys.W;
-            menuDownKey = Keys.S;
-            menuSelectKey = Keys.Enter;
-            quickStartKey = Keys.F1;
             
             ChangeTheme();
         }
@@ -90,9 +82,9 @@ namespace PongProject1
             if (noInputWaitTime > 0) noInputWaitTime--;
             
             //Give a popup text if the player hasn't moved on the main menu for a while (indicating they don't know the controls)
-            if (Keyboard.GetState().IsKeyDown(menuUpKey) || Keyboard.GetState().IsKeyDown(menuDownKey)) //Removes tip on how to use menu if menu button is pressed
+            if (Keyboard.GetState().IsKeyDown(game.Settings.menuUpKey) || Keyboard.GetState().IsKeyDown(game.Settings.menuDownKey)) //Removes tip on how to use menu if menu button is pressed
             {
-                noInputWaitTime = 900;
+                noInputWaitTime = 360;
             }
         }
         #endregion
@@ -113,9 +105,9 @@ namespace PongProject1
                     //The tooltip message if the player doesn't move in the main menu for 15 seconds
                     if (noInputWaitTime == 0)
                     {
-                        game.spriteBatch.DrawString(game.arialFont, $"Use {menuUpKey.ToString()} and {menuDownKey.ToString()} to move in the menu ",
+                        game.spriteBatch.DrawString(game.arialFont, $"Use {game.Settings.menuUpKey.ToString()} and {game.Settings.menuDownKey.ToString()} to move in the menu ",
                             new Vector2(50, 350), Color.Gray);
-                        game.spriteBatch.DrawString(game.arialFont, $"and {menuSelectKey.ToString()} to select an option",
+                        game.spriteBatch.DrawString(game.arialFont, $"and {game.Settings.menuSelectKey.ToString()} to select an option",
                             new Vector2(50, 385), Color.Gray);
                     }
                     break;
@@ -163,11 +155,11 @@ namespace PongProject1
                     MenuString("Back", 10);
                     
                     //Second row (what the keybinds are)
-                    MenuString2ndRow(menuUpKey.ToString(), 0);
-                    MenuString2ndRow(menuDownKey.ToString(), 1);
-                    MenuString2ndRow(menuSelectKey.ToString(), 2);
+                    MenuString2ndRow(game.Settings.menuUpKey.ToString(), 0);
+                    MenuString2ndRow(game.Settings.menuDownKey.ToString(), 1);
+                    MenuString2ndRow(game.Settings.menuSelectKey.ToString(), 2);
                     MenuString2ndRow(game.Settings.quitKey.ToString(), 3);
-                    MenuString2ndRow(quickStartKey.ToString(), 4);
+                    MenuString2ndRow(game.Settings.quickStartKey.ToString(), 4);
                     MenuString2ndRow(game.Settings.pauseKey.ToString(), 5);
                     MenuString2ndRow(game.Settings.player1UpKey.ToString(), 6);
                     MenuString2ndRow(game.Settings.player1DownKey.ToString(), 7);
@@ -212,7 +204,7 @@ namespace PongProject1
                     menuLength = (byte)Enum.GetNames(typeof(Settings)).Length;
                     break;
                 case MenuState.Controls:
-                    menuLength = 12; //Controls does not contain an enum element for every element in the list, so hardcoded
+                    menuLength = 11; //Controls does not contain an enum element for every element in the list, so hardcoded
                     break;
             }
 
@@ -235,21 +227,21 @@ namespace PongProject1
             }
 
             //Quick start match key
-            if (Keyboard.GetState().IsKeyDown(quickStartKey) && !quickStartHeld)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.quickStartKey) && !quickStartHeld)
             {
                 quickStartHeld = true;
                 game.StartGame(lives[player1LivesIndex], lives[player2LivesIndex], player1TypeIndex, player2TypeIndex);
             }
 
             //Move to a different menu / some other action when select key is pressed
-            if (Keyboard.GetState().IsKeyDown(menuSelectKey) && !menuSelectHeld)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.menuSelectKey) && !menuSelectHeld)
             {
                 menuSelectHeld = true;
                 MenuEffect();
             }
 
             //Move a selection higher and wrap around if necessary
-            if (Keyboard.GetState().IsKeyDown(menuUpKey) && !menuUpHeld)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.menuUpKey) && !menuUpHeld)
             {
                 menuUpHeld = true;
 
@@ -264,7 +256,7 @@ namespace PongProject1
             }
 
             //Move a selection lower and wrap around if necessary
-            if (Keyboard.GetState().IsKeyDown(menuDownKey) && !menuDownHeld)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.menuDownKey) && !menuDownHeld)
             {
                 menuDownHeld = true;
                 if (menuIndex == GetMenuLength()) //Checks if menuIndex is at the last element in the enum
@@ -279,22 +271,22 @@ namespace PongProject1
 
             //Keyboard.GetStart().IsKeyDown is active when a key is held down, this reset makes the movement in menu's smoother
             //by requiring the player to let go of the key to continue moving in the same direction in a menu
-            if (Keyboard.GetState().IsKeyUp(menuUpKey))
+            if (Keyboard.GetState().IsKeyUp(game.Settings.menuUpKey))
             {
                 menuUpHeld = false;
             }
             
-            if (Keyboard.GetState().IsKeyUp(menuDownKey))
+            if (Keyboard.GetState().IsKeyUp(game.Settings.menuDownKey))
             {
                 menuDownHeld = false;
             }
             
-            if (Keyboard.GetState().IsKeyUp(menuSelectKey))
+            if (Keyboard.GetState().IsKeyUp(game.Settings.menuSelectKey))
             {
                 menuSelectHeld = false;
             }
 
-            if (Keyboard.GetState().IsKeyUp(quickStartKey))
+            if (Keyboard.GetState().IsKeyUp(game.Settings.quickStartKey))
             {
                 quickStartHeld = false;
             }
@@ -407,22 +399,22 @@ namespace PongProject1
             switch (variablePosition)
             {
                 case 0:
-                    menuUpKey = pressedKeys[0];
+                    game.Settings.menuUpKey = pressedKeys[0];
                     menuIndex++; //Shifts menu index because menuUpHeld will be false and cause an accidental movement of selected menu element
                     break;
                 case 1:
-                    menuDownKey = pressedKeys[0];
+                    game.Settings.menuDownKey = pressedKeys[0];
                     menuIndex--; //Shifts menu index because menuDownHeld will be false and cause an accidental movement of selected menu element
                     break;
                 case 2:
-                    menuSelectKey = pressedKeys[0];
+                    game.Settings.menuSelectKey = pressedKeys[0];
                     break;
                 case 3:
                     game.Settings.quitKey = pressedKeys[0];
                     quitWaitTime = 30;
                     break;
                 case 4:
-                    quickStartKey = pressedKeys[0];
+                    game.Settings.quickStartKey = pressedKeys[0];
                     break;
                 case 5:
                     game.Settings.pauseKey = pressedKeys[0];

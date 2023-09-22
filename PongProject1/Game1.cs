@@ -17,21 +17,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace PongProject1
 {
-    internal enum PlayerMode {} //Can be removed? YES
-    
     internal struct SettingsStruct
     {
         //Keybinds
-        internal Keys menuDownKey = Keys.Down;
-        internal Keys menuUpKey = Keys.Up;
-        internal Keys debugModeKey = Keys.Insert;
+        internal Keys menuDownKey = Keys.S;
+        internal Keys menuUpKey = Keys.W;
+        internal Keys menuSelectKey = Keys.Enter;
         internal Keys player1DownKey = Keys.S;
         internal Keys player1UpKey = Keys.W;
         internal Keys player2DownKey = Keys.Down;
         internal Keys player2UpKey = Keys.Up;
         internal Keys pauseKey = Keys.P;
         internal Keys quitKey = Keys.Escape;
-        internal Keys quickStartKey = Keys.Home;
+        internal Keys quickStartKey = Keys.F1;
 
         //Paddle related variables
         internal readonly int defaultPaddleHeight = 100;
@@ -152,11 +150,15 @@ namespace PongProject1
         //When stopping a match (doesn't exit the program)
         private void QuitMatch()
         {
-            //Menu handeling
+            //Menu handling
             menuOpen = true;
             menu.menuIndex = 0;
-            menu.menuState = Menu.MenuState.MainMenu;
             gamePaused = false;
+            //Only go to main menu if not on the winner screen
+            if(menu.menuState != Menu.MenuState.Winner)
+            {
+                menu.menuState = Menu.MenuState.MainMenu;
+            }
             
             //Disabling paddles and ball
             player1Paddle.Active = false;
