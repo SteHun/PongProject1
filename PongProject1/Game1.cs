@@ -302,10 +302,11 @@ namespace PongProject1
             //If the game is paused
             if (gamePaused)
             {
+                Color fontColor = menu.theme[menu.themeIndex] == "Light" ? Color.Black : Color.White;
                 //Show a pause screen
                 Vector2 textSize = arialFont.MeasureString(pausedText);
                 Vector2 textPosition = new Vector2(screenWidth - textSize.X, screenHeight - textSize.Y) / 2;
-                spriteBatch.DrawString(arialFont, pausedText, textPosition, Color.Black);
+                spriteBatch.DrawString(arialFont, pausedText, textPosition, fontColor);
             }
             
             spriteBatch.End();
