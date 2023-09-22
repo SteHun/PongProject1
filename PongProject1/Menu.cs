@@ -82,7 +82,7 @@ namespace PongProject1
             if (noInputWaitTime > 0) noInputWaitTime--;
             
             //Give a popup text if the player hasn't moved on the main menu for a while (indicating they don't know the controls)
-            if (Keyboard.GetState().IsKeyDown(game.Settings.menuUpKey) || Keyboard.GetState().IsKeyDown(game.Settings.menuDownKey)) //Removes tip on how to use menu if menu button is pressed
+            if (Keyboard.GetState().IsKeyDown(game.Settings.menuUpKey) || Keyboard.GetState().IsKeyDown(game.Settings.menuDownKey) || Keyboard.GetState().IsKeyDown(game.Settings.menuSelectKey)) //Removes tip on how to use menu if menu button is pressed
             {
                 noInputWaitTime = 360;
             }
