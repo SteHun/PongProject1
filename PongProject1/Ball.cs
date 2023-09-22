@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
@@ -10,6 +9,8 @@ namespace PongProject1
 {
     internal class Ball
     {
+        #region Initialization
+        #region Variables
         private Game1 game;
 
         //Miscellaneous
@@ -49,6 +50,7 @@ namespace PongProject1
             minBounceAngle = game.Settings.defaultMinBounceAngle * (MathF.PI / 180);
             maxBounceAngle = game.Settings.defaultMaxBounceAngle * (MathF.PI/ 180);
         }
+        #endregion
 
         //Load textures, set positions and put paddles in array
         internal void Load(ContentManager content, string textureFileName, Paddle[] paddlesImport)
@@ -68,7 +70,9 @@ namespace PongProject1
                 startingPosition = new Vector2(game.screenWidth - Texture.Width, game.screenHeight - Texture.Height) / 2;
             paddles = paddlesImport;
         }
+        #endregion
 
+        #region Update method
         internal void Update(GameTime gameTime)
         {
             //If the ball isn't in play or the wait time between new serves hasn't passed yet
@@ -213,7 +217,9 @@ namespace PongProject1
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * game.Settings.defaultStartingVelocity;
             
         }
+        #endregion
 
+        #region Other methods
         // This method returns -1 to 1 depending on where the ball hits the paddle. It returns null with no collision
         private float? CheckCollision()
         {
@@ -259,6 +265,7 @@ namespace PongProject1
             float result = half + (half - min) * value;
             return result;
         }
+        #endregion
     }
 
 }

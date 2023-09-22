@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Data;
-using System.Diagnostics;
 
 namespace PongProject1
 {
@@ -30,23 +28,6 @@ namespace PongProject1
         private Keys upKey;
         private Keys downKey;
         private SettingsStruct Settings;
-        
-        //Unused, remove if we don't use later
-        internal Paddle(Vector2 startingPosition, int height, int screenHeight, int screenWidth, Keys upKey, Keys downKey, float speed, bool isFacingRight, int playerType, Ball ball, SettingsStruct settings)
-        {
-            this.ball = ball;
-            type = playerType; //Indicates if the paddle is controlled by a human or an AI ranging from easy to impossible difficulty
-            this.startingPosition = startingPosition;
-            this.height = height;
-            this.screenHeight = screenHeight;
-            this.screenWidth = screenWidth;
-            this.upKey = upKey;
-            this.downKey = downKey;
-            Speed = speed;
-            Position = startingPosition;
-            IsFacingRight = isFacingRight; //Used to check if the paddle is on the right, or left side of the screen
-            Settings = settings;
-        }
         
         //Paddle constructor
         internal Paddle(Game1 game, Keys upKey, Keys downKey, bool isFacingRight, int playerType)
@@ -95,6 +76,7 @@ namespace PongProject1
             width = texture.Width;
         }
 
+        #region Update and Draw methods
         //Handles the frame by frame inputs of the paddle
         internal void Update(GameTime gameTime)
         {
@@ -128,6 +110,15 @@ namespace PongProject1
             else if (Position.Y + height > screenHeight)
                 Position.Y = screenHeight - height;
         }
+        
+        //Updates the visuals of the paddle
+        internal void Draw(SpriteBatch spriteBatch)
+        {
+            if (!Visible)
+                return;
+            spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
+        }
+        #endregion
 
         #region  Input handeling
         //The player controller of the paddle
@@ -149,7 +140,7 @@ namespace PongProject1
 
         #region AI
         //The AI when easy mode is selected
-        internal float EasyAIUpdate(GameTime gameTime)
+        private float EasyAIUpdate(GameTime gameTime)
         {
             // if the ball is facing the AI it moves to it with an error margin
             if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
@@ -168,7 +159,7 @@ namespace PongProject1
         }
         
         //The AI when hard mode is selected
-        internal float HardAIUpdate(GameTime gameTime)
+        private float HardAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
             float targetPosition = Position.Y; //Aims to get the ball in the middle of the paddle
@@ -200,7 +191,7 @@ namespace PongProject1
             return totalMovement;
         }
         
-        internal float ImpossibleAIUpdate(GameTime gameTime)
+        private float ImpossibleAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
             float targetPosition;
@@ -266,16 +257,9 @@ namespace PongProject1
         }
         #endregion
         #endregion
-
-        //Updates the visuals of the paddle
-        internal void Draw(GameTime gameTime, SpriteBatch _spriteBatch)
-        {
-            if (!Visible)
-                return;
-            _spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
-        }
     }
 
+    #region Fake ball
     //Used to calculate where the ball will be when crossing the x axis of a paddle
     internal class FakeBall
     {
@@ -312,4 +296,5 @@ namespace PongProject1
             }
         }
     }
+    #endregion
 }

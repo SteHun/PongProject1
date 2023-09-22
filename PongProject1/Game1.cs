@@ -6,13 +6,14 @@ using Microsoft.Xna.Framework.Input;
 
 /* ----EXTRA FEATURES----
 - A menu to start the game and to change settings
+- The option to select keybinds
+- The option to select a theme, affecting the color of the background and text
 - 3 difficulties of computer players
 - Sound effects
 - Pause
+- Exiting a match before it is finished
 (there may be more I forgot) 
  */
-
-
 
 namespace PongProject1
 {
@@ -93,6 +94,7 @@ namespace PongProject1
             screenHeight = graphics.PreferredBackBufferHeight;
         }
 
+        #region  Initialization
         protected override void Initialize()
         {
             //Start in the menu
@@ -115,7 +117,9 @@ namespace PongProject1
             winSFX = Content.Load<SoundEffect>("win");
             base.LoadContent();
         }
+        #endregion
 
+        #region Match state methods
         internal void StartGame(int livesPlayer1, int livesPlayer2, int typePlayer1, int typePlayer2)
         {
             //Setup ball and paddles according to settings
@@ -148,9 +152,13 @@ namespace PongProject1
         //When stopping a match (doesn't exit the program)
         private void QuitMatch()
         {
+            //Menu handeling
             menuOpen = true;
             menu.menuIndex = 0;
             menu.menuState = Menu.MenuState.MainMenu;
+            gamePaused = false;
+            
+            //Disabling paddles and ball
             player1Paddle.Active = false;
             player1Paddle.Visible = false;
             player2Paddle.Active = false;
@@ -158,7 +166,9 @@ namespace PongProject1
             ball.Active = false;
             ball.Visible = false;
         }
-        
+        #endregion
+
+        #region Update and Draw Method
         protected override void Update(GameTime gameTime)
         {
             //Don't run rest of Update() if menu is open
@@ -254,8 +264,8 @@ namespace PongProject1
             {
                 //Draw ball and paddles
                 ball.Draw(gameTime, spriteBatch);
-                player1Paddle.Draw(gameTime, spriteBatch);
-                player2Paddle.Draw(gameTime, spriteBatch);
+                player1Paddle.Draw(spriteBatch);
+                player2Paddle.Draw(spriteBatch);
                 
                 // Draw lives of player 1
                 for (int i = 0; i < player1Lives; i++)
@@ -282,5 +292,6 @@ namespace PongProject1
 
             base.Draw(gameTime);
         }
+        #endregion
     }
 }
