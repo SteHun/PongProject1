@@ -18,7 +18,7 @@ namespace PongProject1
         private Vector2 menu2ndRowTopLeftPosition; //The position where the first element of the 2nd row (in case it exists) of the menu is drawn
         private Vector2 menuTextGap; //The gap between every element of text
         private Color textColor; //The color of the text when not highlighted
-        private short noInputWaitTime; //A delay before a tip on menu controls is shown on the main menu in frames
+        public short noInputWaitTime; //A delay before a tip on menu controls is shown on the main menu in frames
         private byte quitWaitTime; //A delay before the quit button can be pressed in frames 
 
         //Menu toggle lists

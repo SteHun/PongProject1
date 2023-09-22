@@ -153,6 +153,7 @@ namespace PongProject1
             //Menu handling
             menuOpen = true;
             menu.menuIndex = 0;
+            menu.noInputWaitTime = 360;
             gamePaused = false;
             //Only go to main menu if not on the winner screen
             if(menu.menuState != Menu.MenuState.Winner)
