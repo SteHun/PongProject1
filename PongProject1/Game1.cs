@@ -149,6 +149,8 @@ namespace PongProject1
         private void QuitMatch()
         {
             menuOpen = true;
+            menu.menuIndex = 0;
+            menu.menuState = Menu.MenuState.MainMenu;
             player1Paddle.Active = false;
             player1Paddle.Visible = false;
             player2Paddle.Active = false;

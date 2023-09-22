@@ -12,8 +12,8 @@ namespace PongProject1
         private readonly Game1 game;
 
         //Menu things
-        private byte menuIndex; //Keeps track of what the player has selected in the menu
-        private MenuState menuState; //What menu the player is currently in
+        public byte menuIndex; //Keeps track of what the player has selected in the menu
+        public MenuState menuState; //What menu the player is currently in
         private Vector2 menuTextTopLeftPosition; //The position where the first element of the menu is drawn
         private Vector2 menu2ndRowTopLeftPosition; //The position where the first element of the 2nd row (in case it exists) of the menu is drawn
         private Vector2 menuTextGap; //The gap between every element of text
@@ -176,7 +176,7 @@ namespace PongProject1
                     break;
 
                 case MenuState.SelectingKey:
-                    game.spriteBatch.DrawString(game.arialFont, "Press the key you want to set as the keybind for this control", new Vector2(200, 400), textColor);
+                    game.spriteBatch.DrawString(game.arialFont, "Press the key you want to set \nas the keybind for this control", new Vector2(100, 320), textColor);
                     break;
 
                 case MenuState.Winner:
@@ -443,6 +443,7 @@ namespace PongProject1
 
             //Move back to controls menu
             menuSelectHeld = true;
+            quitHeld = true;
             menuState = MenuState.Controls;
         }
 
@@ -517,7 +518,7 @@ namespace PongProject1
         
         #region Menu Enums
 
-        enum MenuState : byte //What menu is currently selected
+        public enum MenuState : byte //What menu is currently selected
         {
             MainMenu,
             Lobby,
