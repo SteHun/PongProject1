@@ -146,7 +146,7 @@ namespace PongProject1
         }
 
         //When stopping a match (doesn't exit the program)
-        private void QuitGame()
+        private void QuitMatch()
         {
             menuOpen = true;
             player1Paddle.Active = false;
@@ -168,9 +168,10 @@ namespace PongProject1
             }
             
             //Exit program if pressing shortcut
-            if (Keyboard.GetState().IsKeyDown(Settings.quitKey))
+            if (Keyboard.GetState().IsKeyDown(Settings.quitKey) && !menu.quitHeld)
             {
-                ExitGame();
+                menu.quitHeld = true;
+                QuitMatch();
             }
 
             //Pause game if pressing shortcut
@@ -208,7 +209,7 @@ namespace PongProject1
                     if (player2Lives <= 0) //If the opposing player lost all their lives
                     {
                         menu.GameOver("Player 1");
-                        QuitGame();
+                        QuitMatch();
                         winSFX.Play();
                         base.Update(gameTime);
                         return;
@@ -220,7 +221,7 @@ namespace PongProject1
                     if (player1Lives <= 0) //If the opposing player lost all their lives
                     {
                         menu.GameOver("Player 2");
-                        QuitGame();
+                        QuitMatch();
                         winSFX.Play();
                         base.Update(gameTime);
                         return;

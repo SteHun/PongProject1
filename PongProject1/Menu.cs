@@ -38,15 +38,14 @@ namespace PongProject1
         private Keys menuUpKey; //These are menu specific keybinds, other keybinds are stored in Game1 Settings struct
         private Keys menuDownKey;
         private Keys menuSelectKey;
-        private Keys debugModeKey;
         private Keys quickStartKey;
 
         //Checks if key is being held down, used to avoid inputting action every frame and instead only on first frame of press
         private bool menuUpHeld;
         private bool menuDownHeld;
         private bool menuSelectHeld;
-        private bool debugModeHeld;
         private bool quickStartHeld;
+        public bool quitHeld;
         
         private string winningPlayer;
 
@@ -73,8 +72,7 @@ namespace PongProject1
             menuUpKey = Keys.W;
             menuDownKey = Keys.S;
             menuSelectKey = Keys.Enter;
-            debugModeKey = Keys.F1;
-            quickStartKey = Keys.F2;
+            quickStartKey = Keys.F1;
             
             ChangeTheme();
         }
@@ -156,27 +154,25 @@ namespace PongProject1
                     MenuString("Menu move down", 1);
                     MenuString("Menu select", 2);
                     MenuString("Quick exit", 3);
-                    MenuString("Enter debug mode", 4);
-                    MenuString("Quick start mode", 5);
-                    MenuString("Pause", 6);
-                    MenuString("Player 1 up", 7);
-                    MenuString("Player 1 down", 8);
-                    MenuString("Player 2 up", 9);
-                    MenuString("Player 2 down", 10);
-                    MenuString("Back", 11);
+                    MenuString("Quick start mode", 4);
+                    MenuString("Pause", 5);
+                    MenuString("Player 1 up", 6);
+                    MenuString("Player 1 down", 7);
+                    MenuString("Player 2 up", 8);
+                    MenuString("Player 2 down", 9);
+                    MenuString("Back", 10);
                     
                     //Second row (what the keybinds are)
                     MenuString2ndRow(menuUpKey.ToString(), 0);
                     MenuString2ndRow(menuDownKey.ToString(), 1);
                     MenuString2ndRow(menuSelectKey.ToString(), 2);
                     MenuString2ndRow(game.Settings.quitKey.ToString(), 3);
-                    MenuString2ndRow(debugModeKey.ToString(), 4);
-                    MenuString2ndRow(quickStartKey.ToString(), 5);
-                    MenuString2ndRow(game.Settings.pauseKey.ToString(), 6);
-                    MenuString2ndRow(game.Settings.player1UpKey.ToString(), 7);
-                    MenuString2ndRow(game.Settings.player1DownKey.ToString(), 8);
-                    MenuString2ndRow(game.Settings.player2UpKey.ToString(), 9);
-                    MenuString2ndRow(game.Settings.player2DownKey.ToString(), 10);
+                    MenuString2ndRow(quickStartKey.ToString(), 4);
+                    MenuString2ndRow(game.Settings.pauseKey.ToString(), 5);
+                    MenuString2ndRow(game.Settings.player1UpKey.ToString(), 6);
+                    MenuString2ndRow(game.Settings.player1DownKey.ToString(), 7);
+                    MenuString2ndRow(game.Settings.player2UpKey.ToString(), 8);
+                    MenuString2ndRow(game.Settings.player2DownKey.ToString(), 9);
                     break;
 
                 case MenuState.SelectingKey:
@@ -233,7 +229,7 @@ namespace PongProject1
             }
 
             //Quick quit key
-            if (Keyboard.GetState().IsKeyDown(game.Settings.quitKey) && quitWaitTime == 0 && menuState != MenuState.SelectingKey)
+            if (Keyboard.GetState().IsKeyDown(game.Settings.quitKey) && quitWaitTime == 0 && menuState != MenuState.SelectingKey && !quitHeld)
             {
                 game.ExitGame();
             }
@@ -301,6 +297,11 @@ namespace PongProject1
             if (Keyboard.GetState().IsKeyUp(quickStartKey))
             {
                 quickStartHeld = false;
+            }
+
+            if (Keyboard.GetState().IsKeyUp(game.Settings.quitKey))
+            {
+                quitHeld = false;
             }
         }
 
@@ -374,7 +375,7 @@ namespace PongProject1
                     break;
 
                 case MenuState.Controls:
-                    if(menuIndex == 11) //Back button
+                    if(menuIndex == 10) //Back button
                     {
                         menuState = MenuState.Settings;
                         menuIndex = 0;
@@ -421,24 +422,21 @@ namespace PongProject1
                     quitWaitTime = 30;
                     break;
                 case 4:
-                    debugModeKey = pressedKeys[0];
-                    break;
-                case 5:
                     quickStartKey = pressedKeys[0];
                     break;
-                case 6:
+                case 5:
                     game.Settings.pauseKey = pressedKeys[0];
                     break;
-                case 7:
+                case 6:
                     game.Settings.player1UpKey = pressedKeys[0];
                     break;
-                case 8:
+                case 7:
                     game.Settings.player1DownKey = pressedKeys[0];
                     break;
-                case 9:
+                case 8:
                     game.Settings.player2UpKey = pressedKeys[0];
                     break;
-                case 10:
+                case 9:
                     game.Settings.player2DownKey = pressedKeys[0];
                     break;
             }
