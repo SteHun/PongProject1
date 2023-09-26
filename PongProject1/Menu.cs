@@ -30,7 +30,7 @@ namespace PongProject1
         private byte player1LivesIndex = 2;
         private byte player2TypeIndex;
         private byte player2LivesIndex = 2;
-        public byte themeIndex;
+        public byte themeIndex = 1;
         private byte soundEffectsIndex = 4; //Starts at 100% volume
         
         //This is used to indicate what keybind is being changed

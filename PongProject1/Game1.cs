@@ -58,6 +58,7 @@ namespace PongProject1
         private const string biggerBallFileName = "Bigger_Ball";
         private const string neonBallFileName = "Neon_ball";
         private const string lifeIconFileName = "ball";
+        private const string neonLifeIconFileName = "heart";
         private const string player1PaddleFileName = "bluePaddle";
         private const string player2PaddleFileName = "redPaddle";
         private const string paddleSizeFileName = "Paddle_size";
@@ -68,6 +69,7 @@ namespace PongProject1
         private readonly GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
+        private Texture2D neonLifeIcon;
         public SpriteFont arialFont;
         private SoundEffect winSFX;
         public Color backgroundColor;
@@ -114,6 +116,7 @@ namespace PongProject1
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             lifeIcon = Content.Load<Texture2D>(lifeIconFileName);
+            neonLifeIcon = Content.Load<Texture2D>(neonLifeIconFileName);
             arialFont = Content.Load<SpriteFont>("arialFont");
             winSFX = Content.Load<SoundEffect>("win");
             base.LoadContent();
@@ -290,12 +293,26 @@ namespace PongProject1
                 // Draw lives of player 1
                 for (int i = 0; i < player1Lives; i++)
                 {
-                    spriteBatch.Draw(lifeIcon, new Vector2(lifeIcon.Width * i, 0), Color.White);
+                    if (menu.theme[menu.themeIndex] == "Light")
+                    {
+                        spriteBatch.Draw(lifeIcon, new Vector2((lifeIcon.Width + 1) * i, 0), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(neonLifeIcon, new Vector2((neonLifeIcon.Width + 2) * i, 0), Color.White);
+                    }
                 }
                 // Draw lives of player 2
                 for (int i = 0; i < player2Lives; i++)
                 {
-                    spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - lifeIcon.Width * (i + 1), 0), Color.White);
+                    if (menu.theme[menu.themeIndex] == "Light")
+                    {
+                        spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - (lifeIcon.Width + 1) * (i + 1), 0), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(neonLifeIcon, new Vector2(graphics.PreferredBackBufferWidth - (neonLifeIcon.Width + 2) * (i + 1), 0), Color.White);
+                    }
                 }
             }
 
