@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
  
@@ -35,6 +36,7 @@ namespace PongProject1
         internal SoundEffect SharpShotSFX;
         internal SoundEffect SharpShotScoreSFX;
         internal SoundEffect SharpShotDefendSFX;
+        private SoundEffectInstance crowdSoundEffectInstance;
         private float minServeAngle;
         private float maxServeAngle;
         private float minBounceAngle;
@@ -139,8 +141,12 @@ namespace PongProject1
             
             //Play a sound effect if the previous hit was a sharp shot (this means a player has defended against a 'hard' ball)
             if (sharpShot)
-                SharpShotDefendSFX.Play();
-            
+            {
+                StopCrowdSFX();
+                crowdSoundEffectInstance = SharpShotDefendSFX.CreateInstance();
+                crowdSoundEffectInstance.Play();
+            }
+
             totalBounces++;
             float angle;
             sharpShot = false;
@@ -168,10 +174,20 @@ namespace PongProject1
             }
 
             if (sharpShot)
-                SharpShotSFX.Play();
+            {
+                StopCrowdSFX();
+                crowdSoundEffectInstance = SharpShotSFX.CreateInstance();
+                crowdSoundEffectInstance.Play();
+            }
 
             //Increase the speed of the ball
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
+        }
+
+        private void StopCrowdSFX()
+        {
+            //crowsSoundEffectInstance may be null at this point. The ? prevents this from executing if it is null
+            crowdSoundEffectInstance?.Stop();
         }
 
         //Update the visuals position of the ball
