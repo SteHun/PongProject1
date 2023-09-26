@@ -31,17 +31,17 @@ namespace PongProject1
         private double activationTime;
         internal Vector2 Velocity;
         internal Texture2D Texture;
-        internal SoundEffect BonkSFX;
-        internal SoundEffect ScoreSFX;
-        internal SoundEffect SharpShotSFX;
-        internal SoundEffect SharpShotScoreSFX;
-        internal SoundEffect SharpShotDefendSFX;
+        private SoundEffect BonkSFX;
+        private SoundEffect ScoreSFX;
+        private SoundEffect SharpShotSFX;
+        private SoundEffect SharpShotScoreSFX;
+        private SoundEffect SharpShotDefendSFX;
         private SoundEffectInstance crowdSoundEffectInstance;
-        private float minServeAngle;
-        private float maxServeAngle;
-        private float minBounceAngle;
-        private float maxBounceAngle;
-        private int totalBounces;
+        private readonly float minServeAngle; //Used to decide in which direction the ball will travel on a serve
+        private readonly float maxServeAngle; //Used to decide in which direction the ball will travel on a serve
+        private readonly float minBounceAngle; //Minimum change in direction when the ball bounces off a paddle
+        private readonly float maxBounceAngle; //Maximum change in direction when the ball bounces off a paddle
+        private int totalBounces; //Used to increase the speed of the ball on touching the paddle
         private Paddle[] paddles;
         internal Ball(Game1 game)
         {
@@ -127,8 +127,6 @@ namespace PongProject1
                     ScoreSFX.Play();
             }
             
-            
-            
             //Check if a paddle touches the ball
             float? collisionResult = CheckCollision();
             if (!collisionResult.HasValue)
@@ -146,10 +144,10 @@ namespace PongProject1
                 crowdSoundEffectInstance = SharpShotDefendSFX.CreateInstance();
                 crowdSoundEffectInstance.Play();
             }
-
-            totalBounces++;
-            float angle;
-            sharpShot = false;
+            
+            totalBounces++; //Increase the bounce counter
+            float angle; //Make preparations for calculating angle
+            sharpShot = false; //Make preparations for decided which sound effect to play
             
             //Change the angle of the ball
             if (Velocity.X < 0)
@@ -173,7 +171,7 @@ namespace PongProject1
                 }
             }
 
-            if (sharpShot)
+            if (sharpShot) //If a special shot is hit, play a special sound effect
             {
                 StopCrowdSFX();
                 crowdSoundEffectInstance = SharpShotSFX.CreateInstance();
@@ -184,6 +182,7 @@ namespace PongProject1
             Velocity = new Vector2(MathF.Sin(angle), MathF.Cos(angle)) * (game.Settings.defaultStartingVelocity + totalBounces * game.Settings.defaultVelocityIncrement);
         }
 
+        //Stop the sound effect of the crowd early to avoid sounds overlapping
         private void StopCrowdSFX()
         {
             //crowsSoundEffectInstance may be null at this point. The ? prevents this from executing if it is null

@@ -319,7 +319,9 @@ namespace PongProject1
             //If the game is paused
             if (gamePaused)
             {
+                //Figure out what color the text should be
                 Color fontColor = menu.theme[menu.themeIndex] == "Light" ? Color.Black : Color.White;
+                
                 //Show a pause screen
                 Vector2 textSize = arialFont.MeasureString(pausedText);
                 Vector2 textPosition = new Vector2(screenWidth - textSize.X, screenHeight - textSize.Y) / 2;

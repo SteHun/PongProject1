@@ -43,6 +43,7 @@ namespace PongProject1
         private bool quickStartHeld;
         public bool quitHeld;
         
+        //Affects who is named on the win screen
         private string winningPlayer;
 
         public Menu(Game1 game)

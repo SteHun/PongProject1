@@ -9,28 +9,28 @@ namespace PongProject1
     internal class Paddle
     {
         //Paddle related variables
-        internal int type;
+        private readonly int type;
         internal Vector2 Position;
         internal bool Active = false;
         internal bool Visible = false;
-        internal float Speed;
-        internal int height;
+        private float Speed;
+        internal readonly int height;
         internal int width;
-        internal bool IsFacingRight;
-        internal float AIerror;
+        internal bool IsFacingRight; //Used to check if the paddle is on the left or right side of the screen
+        private float AIerror; //Offset from predicted ball position in y axis, used to make AI not hit every ball perfectly in the middle (and make EasyAI make mistakes)
 
         //Miscellaneous variables
-        private Ball ball;
-        private int screenHeight;
-        private int screenWidth;
+        private readonly Ball ball;
+        private readonly int screenHeight;
+        private readonly int screenWidth;
         private Texture2D texture;
         private Vector2 startingPosition;
-        private Keys upKey;
-        private Keys downKey;
+        private readonly Keys upKey;
+        private readonly Keys downKey;
         private SettingsStruct Settings;
         
-        private const string paddleRedFileName = "Paddle_red"; //Test
-        private const string paddleBlueFileName = "Paddle_blue"; //Test
+        private const string paddleRedFileName = "Paddle_red";
+        private const string paddleBlueFileName = "Paddle_blue";
         private Texture2D visibleTexture;
         
         //Paddle constructor
