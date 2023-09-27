@@ -17,7 +17,7 @@ You can quit the match with the esc key.
 ### Gameplay mechanics
 As the player, your goal is to stop the ball from passing your paddle, while making tricky shots to score at your opponent's side. If you let the ball through, you lose a life. Whoever depletes their opponents lives first wins the game! As the game progresses, the ball gains speed so stay alert! Depending on how to hit the ball, its angle changes to give you the edge in the game. Use strategically placed balls to get past your opponent! 
 
-### Extra features
+## Extra features
 Other than the bare essentials, we added some more fun features you might enjoy!
 - As the match progresses, a crowd will react accordingly. So make sure to crank up that volume!
 - The game includes easy, hard and impossible computer players. You can even pit two computers players against each other for the true screensaver experience!
