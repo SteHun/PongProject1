@@ -1,5 +1,9 @@
 # Welcome to our implementation of pong!
 
+Created by Stefan and Philip
+Student number Stefan: 1082868
+Student number Philip: 4735781
+
 ## How to play
 ### Menu
 By default, use the W and S keys to cycle through menu items. 
