@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Color = Microsoft.Xna.Framework.Color;
 // ReSharper disable InconsistentNaming
 
 namespace PongProject1
@@ -24,7 +24,7 @@ namespace PongProject1
         //Menu toggle lists
         private readonly string[] playerType = {"Human", "AI Easy", "AI Hard", "AI Impossible"};
         private readonly int[] lives = {1, 2, 3, 4, 5};
-        public readonly string[] theme = { "Light", "Dark" };
+        public readonly string[] theme = { "Light (legacy)", "Dark" };
         private readonly float[] volume = {0f, 0.25f, 0.5f, 0.75f, 1f};
         private byte player1TypeIndex; //Indexes are used to remember what the player has selected in a list
         private byte player1LivesIndex = 2;
@@ -99,9 +99,10 @@ namespace PongProject1
             switch (menuState)
             {
                 case MenuState.MainMenu:
-                    MenuString("Start", 0);
-                    MenuString("Settings", 1);
-                    MenuString("Quit", 2);
+                    game.spriteBatch.Draw(game.menuImage, Vector2.Zero, Color.White);
+                    MainMenuString("Start", 0);
+                    MainMenuString("Settings", 1);
+                    MainMenuString("Quit", 2);
 
                     //The tooltip message if the player doesn't move in the main menu for 15 seconds
                     if (noInputWaitTime == 0)
@@ -483,7 +484,7 @@ namespace PongProject1
         {
             switch (theme[themeIndex])
             {
-                case "Light":
+                case "Light (legacy)":
                     game.backgroundColor = Color.CornflowerBlue;
                     textColor = Color.White;
                     break;
@@ -499,6 +500,12 @@ namespace PongProject1
         private void MenuString(string text, byte index)
         {
             game.spriteBatch.DrawString(game.arialFont, text, menuTextTopLeftPosition + menuTextGap*index, MenuEntryColor(index));
+        }
+
+        //Main menu has a image of pong so text should be moved down a bit
+        private void MainMenuString(string text, byte index)
+        {
+            game.spriteBatch.DrawString(game.arialFont, text, menuTextTopLeftPosition + menuTextGap*index + new Vector2(0, 150), MenuEntryColor(index));
         }
 
         //Same but with the second row vector

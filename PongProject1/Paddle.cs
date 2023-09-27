@@ -129,7 +129,7 @@ namespace PongProject1
             if (!Visible)
                 return;
 
-            if (theme == "Light")
+            if (theme == "Light (legacy)")
             {
                 spriteBatch.Draw(texture, new Rectangle((int)MathF.Round(Position.X), (int)MathF.Round(Position.Y), texture.Width, height), Color.White);
             }

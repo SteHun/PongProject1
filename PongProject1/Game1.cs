@@ -6,13 +6,14 @@ using Microsoft.Xna.Framework.Input;
 
 /* ----EXTRA FEATURES----
 - A menu to start the game and to change settings
+- A title screen
 - The option to select keybinds
 - The option to select a theme
 - 3 difficulties of computer players
-- Sound effects
+- Sound effects (with special conditions)
 - Pause
 - Exiting a match before it is finished
-(there may be more I forgot) 
+- Copyright protection
  */
 
 namespace PongProject1
@@ -62,6 +63,7 @@ namespace PongProject1
         private const string player1PaddleFileName = "bluePaddle";
         private const string player2PaddleFileName = "redPaddle";
         private const string paddleSizeFileName = "Paddle_size";
+        private const string menuImageFileName = "Titlescreen";
         internal readonly int screenWidth;
         internal readonly int screenHeight;
         private const string pausedText = "GAME PAUSED";
@@ -70,6 +72,7 @@ namespace PongProject1
         public SpriteBatch spriteBatch;
         private Texture2D lifeIcon;
         private Texture2D neonLifeIcon;
+        public Texture2D menuImage; //Used on main menu
         public SpriteFont arialFont;
         private SoundEffect winSFX;
         public Color backgroundColor;
@@ -119,6 +122,7 @@ namespace PongProject1
             neonLifeIcon = Content.Load<Texture2D>(neonLifeIconFileName);
             arialFont = Content.Load<SpriteFont>("arialFont");
             winSFX = Content.Load<SoundEffect>("win");
+            menuImage = Content.Load<Texture2D>(menuImageFileName);
             base.LoadContent();
         }
         #endregion
@@ -130,7 +134,7 @@ namespace PongProject1
             ball = new Ball(this);
             player1Paddle = new Paddle(this, Settings.player1UpKey, Settings.player1DownKey, true, typePlayer1);
             player2Paddle = new Paddle(this, Settings.player2UpKey, Settings.player2DownKey, false, typePlayer2);
-            if (menu.theme[menu.themeIndex] == "Light")
+            if (menu.theme[menu.themeIndex] == "Light (legacy)")
             {
                 player1Paddle.Load(Content, player1PaddleFileName);
                 player2Paddle.Load(Content, player2PaddleFileName);
@@ -293,7 +297,7 @@ namespace PongProject1
                 // Draw lives of player 1
                 for (int i = 0; i < player1Lives; i++)
                 {
-                    if (menu.theme[menu.themeIndex] == "Light")
+                    if (menu.theme[menu.themeIndex] == "Light (legacy)")
                     {
                         spriteBatch.Draw(lifeIcon, new Vector2((lifeIcon.Width + 1) * i, 0), Color.White);
                     }
@@ -305,7 +309,7 @@ namespace PongProject1
                 // Draw lives of player 2
                 for (int i = 0; i < player2Lives; i++)
                 {
-                    if (menu.theme[menu.themeIndex] == "Light")
+                    if (menu.theme[menu.themeIndex] == "Light (legacy)")
                     {
                         spriteBatch.Draw(lifeIcon, new Vector2(graphics.PreferredBackBufferWidth - (lifeIcon.Width + 1) * (i + 1), 0), Color.White);
                     }
@@ -320,7 +324,7 @@ namespace PongProject1
             if (gamePaused)
             {
                 //Figure out what color the text should be
-                Color fontColor = menu.theme[menu.themeIndex] == "Light" ? Color.Black : Color.White;
+                Color fontColor = menu.theme[menu.themeIndex] == "Light (legacy)" ? Color.Black : Color.White;
                 
                 //Show a pause screen
                 Vector2 textSize = arialFont.MeasureString(pausedText);
