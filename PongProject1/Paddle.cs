@@ -167,10 +167,14 @@ namespace PongProject1
         //The AI when easy mode is selected
         private float EasyAIUpdate(GameTime gameTime)
         {
+            //Conditions for easy AI paddle to move
+            int distanceBeforeReaction = 250; //Makes the AI wait a bit before moving to the position of the ball coming it's way
+            bool leftSideCheck = IsFacingRight && ball.Velocity.X < 0 && ball.Position.X < screenWidth - distanceBeforeReaction;
+            bool rightSideCheck = !IsFacingRight && ball.Velocity.X > 0 && ball.Position.X > distanceBeforeReaction;
             // if the ball is facing the AI it moves to it with an error margin
-            if ((IsFacingRight && ball.Velocity.X > 0) || (!IsFacingRight && ball.Velocity.X < 0))
+            if (!leftSideCheck && !rightSideCheck)
             {
-                SetNewAIError(1.5f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
+                SetNewAIError(1.8f * (ball.Velocity.Length() / Settings.defaultStartingVelocity));
                 return 0; //If the ball is going away from the AI, the AI will do nothing
             }
             float targetPosition = ball.TrueYPosition - (float)height / 2 + AIerror;
@@ -188,8 +192,8 @@ namespace PongProject1
         {
             float totalMovement = 0;
             float targetPosition; //Aims to get the ball in the middle of the paddle
-            int distanceBeforeReaction = 180; //Makes the AI wait a bit before moving to the position of the ball coming it's way
             //Conditions for hard AI paddle to move
+            int distanceBeforeReaction = 180; //Makes the AI wait a bit before moving to the position of the ball coming it's way
             bool leftSideCheck = IsFacingRight && ball.Velocity.X < 0 && ball.Position.X < screenWidth - distanceBeforeReaction;
             bool rightSideCheck = !IsFacingRight && ball.Velocity.X > 0 && ball.Position.X > distanceBeforeReaction;
             
