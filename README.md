@@ -10,6 +10,7 @@ You can press the esc key to exit the game at any time.
 In gameplay, the default controls for the paddle are:
 - W and S for player 1
 - Up and Down arrow for player 2
+
 You can pause the game at any time with the P key. 
 You can quit the match with the esc key. 
 (note that all controls can be changed from the settings)
