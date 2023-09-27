@@ -81,13 +81,10 @@ namespace PongProject1
             else
             {
                 visibleTexture = content.Load<Texture2D>(paddleBlueFileName);
-            }
-            
-            if (!IsFacingRight)
-            {
                 startingPosition.X -= texture.Width;
                 Position = startingPosition;
             }
+            
             width = texture.Width;
         }
 
@@ -190,7 +187,7 @@ namespace PongProject1
         private float HardAIUpdate(GameTime gameTime)
         {
             float totalMovement = 0;
-            float targetPosition = Position.Y; //Aims to get the ball in the middle of the paddle
+            float targetPosition; //Aims to get the ball in the middle of the paddle
             int distanceBeforeReaction = 180; //Makes the AI wait a bit before moving to the position of the ball coming it's way
             //Conditions for hard AI paddle to move
             bool leftSideCheck = IsFacingRight && ball.Velocity.X < 0 && ball.Position.X < screenWidth - distanceBeforeReaction;

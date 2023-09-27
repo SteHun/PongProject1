@@ -54,7 +54,7 @@ namespace PongProject1
     {
         //Initialization of files and application
         internal SettingsStruct Settings = new ();
-        private const string ballFileName = "ball"; //Old ball
+        // private const string ballFileName = "ball"; this is the old boll
         private const string biggerBallFileName = "Bigger_Ball";
         private const string neonBallFileName = "Neon_ball";
         private const string lifeIconFileName = "ball";
